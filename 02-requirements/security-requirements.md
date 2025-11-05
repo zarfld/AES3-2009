@@ -250,6 +250,7 @@ Scenario: Validate HAL buffer size
 - **Fail-Safe**: Invalid input must NEVER cause undefined behavior or crash
 
 **Traceability**:
+
 - **From**: StR-SEC-001 (Input validation and bounds checking)
 - **To**: 
   - DES-SEC-001 (Input validation module design)
@@ -268,6 +269,7 @@ Scenario: Validate HAL buffer size
 Buffer overflows are the most common vulnerability in embedded C/C++ systems (OWASP A01:2021). AES3 processing involves numerous array operations (32 time slots, 192 frames, 24 channel status bytes) where off-by-one errors can cause memory corruption, crashes, or exploitation.
 
 **OWASP References**:
+
 - **A01:2021 - Broken Access Control**: Prevent out-of-bounds memory access
 - **CWE-119**: Improper Restriction of Operations within Memory Bounds
 - **CWE-120**: Buffer Copy without Checking Size of Input
@@ -401,6 +403,7 @@ Scenario: Prevent double-free
 - **Code Standard**: MISRA C:2012 Rule 18.1 (pointer arithmetic bounds)
 
 **Traceability**:
+
 - **From**: StR-SEC-001 (Buffer overflow prevention)
 - **To**: 
   - DES-SEC-002 (Safe array accessor design)
@@ -419,6 +422,7 @@ Scenario: Prevent double-free
 AES3 includes built-in error detection mechanisms (parity bits, CRCC checksums) to detect data corruption. These MUST be validated to prevent processing corrupted audio data that could indicate transmission errors or intentional tampering.
 
 **OWASP References**:
+
 - **A08:2021 - Software and Data Integrity Failures**: Validate data integrity
 - **CWE-354**: Improper Validation of Integrity Check Value
 
@@ -543,6 +547,7 @@ Scenario: Detect corrupted preamble pattern
   - Expose error counters for monitoring (parity_error_count, crcc_error_count)
 
 **Traceability**:
+
 - **From**: StR-SEC-002 (Malformed stream protection)
 - **To**: 
   - DES-SEC-003 (Parity and CRCC validation design)
@@ -564,6 +569,7 @@ Scenario: Detect corrupted preamble pattern
 AES3 uses 192-frame blocks for channel status synchronization. Frame counter wraparound at 192 must be handled correctly to prevent integer overflow, off-by-one errors, or loss of synchronization.
 
 **OWASP References**:
+
 - **A04:2021 - Insecure Design**: Prevent integer overflow vulnerabilities
 - **CWE-190**: Integer Overflow or Wraparound
 
@@ -665,6 +671,7 @@ Scenario: Detect out-of-order frame numbers
 - **Performance**: Frame counter operations <100 ns (non-blocking)
 
 **Traceability**:
+
 - **From**: StR-SEC-002 (Frame counter overflow prevention)
 - **To**: 
   - DES-SEC-004 (Frame counter state machine design)
@@ -685,6 +692,7 @@ Scenario: Detect out-of-order frame numbers
 Embedded systems have limited CPU, memory, and stack resources. Malicious or malformed audio streams must not cause resource exhaustion leading to denial-of-service, system hang, or crash.
 
 **OWASP References**:
+
 - **A04:2021 - Insecure Design**: Prevent resource exhaustion attacks
 - **CWE-400**: Uncontrolled Resource Consumption
 - **CWE-770**: Allocation of Resources Without Limits or Throttling
@@ -824,6 +832,7 @@ Scenario: Monitor heap usage approaching limit
   - Expose metrics via read-only interface (no performance impact)
 
 **Traceability**:
+
 - **From**: 
   - StR-SEC-001 (Memory allocation safety)
   - StR-SEC-002 (DoS protection)
@@ -900,12 +909,14 @@ Scenario: Monitor heap usage approaching limit
 ## 6. References
 
 ### Standards
+
 - **ISO/IEC/IEEE 29148:2018** - Requirements engineering
 - **AES3-2009** - Digital audio interface (Parts 1-4)
 - **OWASP Top 10 (2021)** - Application security risks
 - **MISRA C:2012** - C coding guidelines for embedded systems
 
 ### Common Weakness Enumeration (CWE)
+
 - **CWE-20**: Improper Input Validation
 - **CWE-119**: Buffer Errors
 - **CWE-190**: Integer Overflow
@@ -913,6 +924,7 @@ Scenario: Monitor heap usage approaching limit
 - **CWE-400**: Uncontrolled Resource Consumption
 
 ### Related Requirements Documents
+
 - `stakeholder-requirements-specification.md` (Phase 01)
 - `aes3-part1-audio-content-requirements.md` (Part 1 functional requirements)
 - `aes3-part2-metadata-subcode-requirements.md` (Part 2 functional requirements)
