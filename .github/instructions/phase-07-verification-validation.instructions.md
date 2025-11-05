@@ -545,12 +545,21 @@ Ensure all requirements are:
 ### Always Do
 ✅ Maintain complete requirements traceability  
 ✅ Execute all test levels (unit, integration, system, acceptance)  
-✅ Involve customer in acceptance testing  
-✅ Automate tests where possible  
+✅ Involve customer in acceptance testing (customer writes/defines tests)  
+✅ Automate tests where possible (especially acceptance tests)  
 ✅ Document all test results  
 ✅ Track and resolve all defects  
 ✅ Verify >80% code coverage  
 ✅ Validate against stakeholder needs  
+✅ Practice TDD: Red → Green → Refactor (write failing test BEFORE any code)  
+✅ Test everything that could possibly break  
+✅ Ensure all tests run flawlessly  
+✅ Make acceptance criteria executable  
+✅ Define acceptance tests BEFORE implementation  
+✅ Perform V&V in parallel with all lifecycle stages (not just at end)  
+✅ Test scenarios, stress/boundary conditions, and fault recovery  
+✅ Verify products conform to requirements (correctness, completeness, consistency)  
+✅ Validate products satisfy intended use and user needs  
 
 ### Never Do
 ❌ Skip acceptance tests  
@@ -559,6 +568,11 @@ Ensure all requirements are:
 ❌ Ignore non-functional requirements  
 ❌ Skip customer validation  
 ❌ Disable failing tests  
+❌ Write new functionality without a failing test first  
+❌ Let time pressure cause you to skip tests ("Test Later" = "Test Never")  
+❌ Promote prototypes to production without careful validation  
+❌ Use unreliable test conditions (exact timestamps, specific error wording)  
+❌ Perform V&V only at conclusion of phases (must be in parallel)  
 
 ## 📊 Phase Exit Criteria
 

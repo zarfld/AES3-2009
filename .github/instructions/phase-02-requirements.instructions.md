@@ -345,18 +345,33 @@ Then [error handling expected]
 ✅ Include non-functional requirements (not just functional)  
 ✅ Use consistent requirement IDs (REQ-F-XXX, REQ-NF-XXX)  
 ✅ Write user stories in Given-When-Then format  
-✅ Prioritize with customer involvement  
-✅ Document assumptions and dependencies  
+✅ Prioritize with customer involvement (Planning Game)  
+✅ Document assumptions and dependencies explicitly  
 ✅ Validate requirements with stakeholders  
+✅ Use "shall" for mandatory binding provisions  
+✅ Write requirements that specify "what" not "how" (avoid design constraints)  
+✅ Make requirements verifiable and testable with objective criteria  
+✅ Use active voice in requirement statements  
+✅ Apply YAGNI: specify only for current iteration + 1  
+✅ Define acceptance tests BEFORE implementation (ATDD)  
+✅ Customer defines acceptance tests  
+✅ Focus on delivering value; maximize work NOT done  
+✅ Recognize that requirements constantly change; embrace evolution  
 
 ### Never Do
 ❌ Create untraceable requirements  
-❌ Use ambiguous language ("fast," "user-friendly")  
+❌ Use ambiguous language ("fast," "user-friendly," superlatives, subjective terms)  
 ❌ Mix requirements with design solutions  
 ❌ Skip non-functional requirements  
 ❌ Create requirements without acceptance criteria  
 ❌ Proceed with inconsistent or conflicting requirements  
-❌ Specify requirements for "future" features (YAGNI)  
+❌ Specify requirements for "future" features (YAGNI / No gold plating)  
+❌ Use loopholes ("if possible", "as appropriate", "as applicable")  
+❌ Use "must" (use "shall" for mandatory, "should" for desired)  
+❌ Write negative requirements ("shall not")  
+❌ Wait for requirements to be "finished" before design/implementation  
+❌ Build for tomorrow based on hypothetical needs  
+❌ Value requirements only for developers (e.g., dictating specific tech stack)  
 
 ## 🔍 Clarifying Questions to Ask
 

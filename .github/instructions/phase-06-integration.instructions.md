@@ -569,7 +569,7 @@ describe('User Workflow Integration Tests', () => {
 ## 🚨 Critical Requirements for This Phase
 
 ### Always Do
-✅ Integrate continuously (multiple times/day)  
+✅ Integrate continuously (multiple times/day minimum)  
 ✅ Run full test suite on integration  
 ✅ Fix broken builds immediately (<10 min)  
 ✅ Test all component interfaces  
@@ -577,14 +577,22 @@ describe('User Workflow Integration Tests', () => {
 ✅ Automate integration testing  
 ✅ Monitor integration health  
 ✅ Document integration issues  
+✅ Integrate and build system many times a day  
+✅ All tests must run flawlessly before integration  
+✅ Ensure system always works using comprehensive tests  
+✅ Take small, deliberate steps, checking for feedback  
+✅ Collect reliability metrics (duty time, failures, restore times) per OP  
+✅ Automate operations to minimize anomalies  
 
 ### Never Do
 ❌ Commit on broken build  
 ❌ Skip integration tests  
 ❌ Integrate without testing  
-❌ Leave build broken overnight  
+❌ Leave build broken overnight (fix within 10 minutes)  
 ❌ Ignore integration failures  
 ❌ Disable failing tests  
+❌ Leave code unintegrated for more than a couple of hours  
+❌ Let the press of time urge you to skip tests  
 
 ## 📊 Phase Exit Criteria
 

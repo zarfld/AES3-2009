@@ -517,8 +517,8 @@ See `views/README.md` for full rules. Highlights:
 ## 🚨 Critical Requirements for This Phase
 
 ### Always Do
-✅ Document all architectural decisions with ADRs  
-✅ Create multiple views addressing different concerns  
+✅ Document all architectural decisions with ADRs (including rationale and alternatives)  
+✅ Create multiple views addressing different stakeholder concerns  
 ✅ Trace architecture to requirements  
 ✅ Identify and document architectural risks  
 ✅ Define clear component interfaces  
@@ -526,6 +526,16 @@ See `views/README.md` for full rules. Highlights:
 ✅ Ensure architecture supports testability (TDD)  
 ✅ Document constraints explicitly  
 ✅ Review with stakeholders  
+✅ Base architecture on prioritized Quality Attribute Requirements (QARs)  
+✅ Ensure Conceptual Integrity (consistency in design throughout architecture)  
+✅ Design structures using Information Hiding and Separation of Concerns  
+✅ Depend upon abstractions, not concrete classes (DIP)  
+✅ Favor composition over inheritance  
+✅ Program to interfaces, not implementations  
+✅ Actively engage with development teams (no ivory tower)  
+✅ Test architectural choices with concrete experiments/prototypes  
+✅ Design for changeability; avoid premature optimization  
+✅ Document high-level system architecture, key abstractions, and mechanisms  
 
 ### Never Do
 ❌ Create architecture without understanding requirements  
@@ -536,6 +546,14 @@ See `views/README.md` for full rules. Highlights:
 ❌ Design without considering testability  
 ❌ Forget to document alternatives considered  
 ❌ Create architecture that can't be refactored  
+❌ Rely on specific versions of commercial products (design for replaceability)  
+❌ Establish isolated "ivory tower" architecture (architects must live with consequences)  
+❌ Adopt solutions without testing them first  
+❌ Overspecify design upfront (only enough detail for current requirements)  
+❌ Confuse architecture with detailed design  
+❌ Create centralized control architectures (prefer choreography over orchestration)  
+❌ Force database integration (creates tight coupling)  
+❌ Expose internal representation details (increases coupling)  
 
 ## 🔍 Clarifying Questions to Ask
 

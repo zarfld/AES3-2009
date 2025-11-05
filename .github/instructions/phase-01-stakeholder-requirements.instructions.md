@@ -172,12 +172,20 @@ Then [expected result]
 ### Always Do
 ✅ Interview all stakeholder classes  
 ✅ Document conflicting requirements  
-✅ Prioritize with customer involvement  
+✅ Prioritize with customer involvement (Planning Game)  
 ✅ Define measurable acceptance criteria  
 ✅ Validate requirements with stakeholders  
-✅ Document assumptions explicitly  
-✅ Identify constraints early  
-✅ Create traceable requirement IDs (StR-XXX)
+✅ Document assumptions explicitly and prove them  
+✅ Identify constraints early (budget, technical, regulatory, business rules)  
+✅ Create traceable requirement IDs (StR-XXX)  
+✅ Use "shall" for mandatory binding provisions  
+✅ Use active voice in requirements (e.g., "The actor does X")  
+✅ Ensure requirements are necessary, appropriate, unambiguous, complete, singular, feasible, verifiable, and correct  
+✅ Trace requirements to one or more stakeholders and their needs  
+✅ Use objective acceptance criteria to make requirements testable  
+✅ Focus on open, honest communication (conversation is preferred)  
+✅ Document rationale (why) for each requirement  
+✅ Use ubiquitous language (domain vocabulary) consistently  
 
 ### Never Do
 ❌ Proceed without stakeholder validation  
@@ -186,7 +194,15 @@ Then [expected result]
 ❌ Ignore conflicting requirements  
 ❌ Assume implicit requirements  
 ❌ Define technical solutions (that comes later)  
-❌ Skip business context documentation
+❌ Skip business context documentation  
+❌ Use vague or general terms (superlatives like "best", subjective language like "user-friendly", ambiguous terms like "and/or")  
+❌ Use loopholes (such as "if possible", "as appropriate", "as applicable")  
+❌ Use the term "must" (use "shall" instead for mandatory requirements)  
+❌ Write negative requirements (e.g., "shall not")  
+❌ Build for tomorrow / gold plating (implement only what is necessary for current needs)  
+❌ Write requirements valued only by developers (e.g., dictating specific infrastructure technology)  
+❌ Try to freeze requirements before starting implementation (requirements evolve)  
+❌ Run on autopilot; constantly think critically about every requirement
 
 ## 🔍 Clarifying Questions to Ask
 

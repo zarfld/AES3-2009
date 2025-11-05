@@ -500,13 +500,25 @@ pg_restore -h db.example.com -U admin -d mydb backup-2025-02-15.dump
 ✅ Provide comprehensive documentation  
 ✅ Train users and operators  
 ✅ Verify backups before deployment  
+✅ Release frequently (small releases on very short cycles: weekly/bi-weekly)  
+✅ Deploy small, incremental changes to reduce risk  
+✅ Automate deployment pipeline  
+✅ Automate operations to minimize anomalies  
+✅ Apply security patches quickly to avoid known exploits  
+✅ Use feature flags for gradual rollout  
+✅ Ensure quick rollback capability (<5 minutes)  
+✅ Deliver working software frequently (short timeframes preferred)  
 
 ### Never Do
 ❌ Deploy without testing  
 ❌ Deploy without rollback plan  
-❌ Deploy during peak hours  
+❌ Deploy during peak hours (unless necessary)  
 ❌ Skip user notification  
 ❌ Ignore post-deployment monitoring  
+❌ Store secrets, API keys, or credentials in source code  
+❌ Enforce arbitrary password composition rules  
+❌ Make large, risky deployments (prefer small releases)  
+❌ Deploy manually when automation is possible  
 
 ## 📊 Phase Exit Criteria
 

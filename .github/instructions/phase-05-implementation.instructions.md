@@ -542,26 +542,39 @@ class UserService {
 ## 🚨 Critical Requirements for This Phase
 
 ### Always Do (XP Practices)
-✅ **Write tests first (TDD)** - Red → Green → Refactor  
-✅ **Integrate continuously** - Multiple times per day  
-✅ **Pair program** - For complex or critical code  
-✅ **Refactor mercilessly** - Keep code clean  
+✅ **Write tests first (TDD)** - Red → Green → Refactor (write failing test BEFORE any code)  
+✅ **Integrate continuously** - Multiple times per day, no code unintegrated >couple hours  
+✅ **Pair program** - Write ALL production code in pairs  
+✅ **Refactor mercilessly** - Refactor early, refactor often (daily activity)  
 ✅ **Follow coding standards** - Use linters and formatters  
-✅ **Collective ownership** - Anyone can modify any code  
-✅ **Keep it simple** - YAGNI, avoid over-engineering  
-✅ **Run all tests** - Before every commit  
+✅ **Collective ownership** - Anyone can modify any code to fix/improve  
+✅ **Keep it simple** - YAGNI, assume simplicity, simplest design that works  
+✅ **Run all tests** - Before every commit; all tests must run flawlessly  
+✅ **Test thoroughly** - Test everything that could possibly break  
+✅ **Deliver frequently** - Small releases on very short cycles  
+✅ **Take small steps** - Always deliberate, check for feedback before proceeding  
 
-### Always Do (Standards Compliance)
+### Always Do (Standards Compliance & Best Practices)
 ✅ Implement per design specifications  
 ✅ Trace code to design elements  
-✅ Document public APIs  
-✅ Handle all error cases  
-✅ Log significant events  
+✅ Document public APIs (but build documentation in, don't bolt it on)  
+✅ Handle all error cases (analyze all errors, don't assume they can't happen)  
+✅ Log significant events (structured logs for reliability evidence)  
 ✅ Validate all inputs  
 ✅ Maintain >80% test coverage  
+✅ Use assertions (preconditions, postconditions, invariants) to document interfaces  
+✅ Use ubiquitous language (domain vocabulary) consistently  
+✅ Eliminate duplication (DRY: single authoritative representation)  
+✅ Write intention-revealing code (clear names, self-documenting)  
+✅ Adhere to SOLID principles  
+✅ Test assumptions; prove them, don't assume  
+✅ Automate everything (operations, tests, deployment)  
+✅ Program deliberately, not by coincidence  
+✅ Communicate clearly (conversation is preferred form)  
 
 ### Never Do
-❌ Write code without tests (breaks TDD)  
+❌ Write code without tests (breaks TDD) - **"Test Later" means "Test Never"**  
+❌ Let time pressure cause you to skip tests  
 ❌ Commit on broken build  
 ❌ Skip refactoring ("we'll do it later")  
 ❌ Create long methods (>50 lines)  
@@ -569,6 +582,17 @@ class UserService {
 ❌ Ignore code smells  
 ❌ Skip error handling  
 ❌ Hard-code configuration  
+❌ Build for tomorrow / gold plate (implement only what's needed today)  
+❌ Duplicate logic (violate DRY)  
+❌ Run on autopilot; constantly think critically  
+❌ Write comments that paraphrase code (explain "why", not "how")  
+❌ Catch and re-raise exceptions unnecessarily  
+❌ Use global data or Singletons as globals  
+❌ Test code from others (unless you distrust it)  
+❌ Store secrets, API keys, or credentials in source code  
+❌ Produce documents that aren't being actively used  
+❌ Leave code unintegrated longer than a few hours  
+❌ Become attached to your own ideas (be ready to replace them)  
 
 ## 📊 Code Quality Metrics
 

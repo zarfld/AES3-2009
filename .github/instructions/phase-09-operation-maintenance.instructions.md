@@ -601,19 +601,34 @@ Similar incidents will be prevented by:
 ✅ Monitor system 24/7  
 ✅ Respond to incidents promptly  
 ✅ Document all incidents and resolutions  
-✅ Conduct post-incident reviews  
+✅ Conduct post-incident reviews (retrospectives)  
 ✅ Maintain backups and test restores  
 ✅ Keep documentation up-to-date  
-✅ Practice sustainable pace (XP)  
-✅ Continuously improve  
+✅ Practice sustainable pace (40-hour weeks, work-life balance)  
+✅ Continuously improve based on feedback and lessons learned  
+✅ Practice collective ownership (team owns production system)  
+✅ Share on-call responsibility  
+✅ Hold regular retrospectives and act on lessons learned  
+✅ Refactor continuously in maintenance  
+✅ Apply security patches quickly  
+✅ Automate operational procedures  
+✅ Focus on open, honest communication  
+✅ Quality must be excellent  
 
 ### Never Do
 ❌ Ignore monitoring alerts  
 ❌ Skip post-incident reviews  
 ❌ Deploy without testing  
-❌ Work unsustainable hours  
-❌ Create single points of failure (knowledge)  
+❌ Work unsustainable hours (no heroics or death marches)  
+❌ Create single points of failure (knowledge silos, "hero" mentality)  
 ❌ Skip backup verification  
+❌ Live with "broken windows" (poor designs, incorrect decisions, bad code)  
+❌ Provide lame excuses (provide options instead)  
+❌ Ignore defects or quality issues  
+❌ Run on autopilot; constantly think critically  
+❌ Allow the production of documents that aren't actively used  
+❌ Skip continuous improvement activities  
+❌ Prevent burnout (maintain sustainable pace)  
 
 ## 📊 Success Criteria
 

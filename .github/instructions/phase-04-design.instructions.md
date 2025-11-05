@@ -753,14 +753,25 @@ input CreateUserInput {
 ## 🚨 Critical Requirements for This Phase
 
 ### Always Do
-✅ Follow Simple Design principles (XP)  
+✅ Follow Simple Design principles: runs all tests, no duplication, expresses intent, minimizes elements  
 ✅ Design for testability (TDD-ready)  
 ✅ Document all public interfaces  
 ✅ Trace design to architecture and requirements  
-✅ Use design patterns appropriately  
+✅ Use design patterns appropriately (but let them emerge naturally)  
 ✅ Specify error handling  
 ✅ Define data validation rules  
 ✅ Include algorithm complexity analysis  
+✅ Implement simplest design that could possibly work  
+✅ Eliminate duplication (DRY: Don't Repeat Yourself - single authoritative representation)  
+✅ Follow Open-Closed Principle (open for extension, closed for modification)  
+✅ Follow Single Responsibility Principle (one reason to change)  
+✅ Favor composition over inheritance  
+✅ Program to interfaces, not implementations  
+✅ Depend on abstractions (Dependency Inversion Principle)  
+✅ Encapsulate what varies  
+✅ Use side-effect-free functions where possible  
+✅ Refactor continuously to improve design  
+✅ Strive for loose coupling and high cohesion  
 
 ### Never Do
 ❌ Over-engineer (YAGNI)  
@@ -770,6 +781,15 @@ input CreateUserInput {
 ❌ Create circular dependencies  
 ❌ Design without considering refactoring  
 ❌ Skip documentation of design decisions  
+❌ Duplicate logic (violate DRY)  
+❌ Create train wrecks (chain method calls, more than one ".")  
+❌ Add flexibility or abstraction without demonstrable need today  
+❌ Force design patterns just for the sake of using them  
+❌ Instantiate dependencies directly inside class (Control Freak anti-pattern)  
+❌ Use Service Locator anti-pattern  
+❌ Use global data or Singletons as global variables  
+❌ Create two elements with identical/similar responsibilities  
+❌ Design entire system before implementation  
 
 ## 📊 Phase Entry Criteria
 
