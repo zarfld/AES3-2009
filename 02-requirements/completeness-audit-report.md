@@ -31,12 +31,14 @@
 **Status**: ⚠️ **NEARLY READY** - Significant progress, but needs targeted improvements before stakeholder review.
 
 **Key Strengths**:
+
 - ✅ Excellent traceability (100% of requirements linked to stakeholder requirements)
 - ✅ Strong AES3 specification references (100% coverage)
 - ✅ Comprehensive Gherkin acceptance criteria (95% of requirements)
 - ✅ Well-defined functional behavior (average 9.2/10)
 
 **Key Gaps**:
+
 - ⚠️ Error handling scenarios incomplete (average 6.8/10)
 - ⚠️ Security requirements minimal (average 5.2/10)
 - ⚠️ Performance quantification inconsistent (average 7.5/10)
@@ -66,15 +68,18 @@
 ### Dimension 1: Functional Completeness (9.2/10) ✅
 
 **Strengths**:
+
 - All AES3-2009 clauses systematically covered (Parts 1-4)
 - Clear functional decomposition (PCM coding, channel status, subframes, HAL)
 - No obvious functional gaps identified
 
 **Minor Gaps**:
+
 - Part 4: Missing explicit HAL error recovery procedures
 - Part 3: Biphase-mark decoding edge cases (clock recovery drift)
 
 **Recommendation**: 
+
 - Add REQ-FUNC-HAL-009 for HAL error recovery and fallback logic
 - Add REQ-FUNC-TRANS-010 for biphase-mark clock recovery drift handling
 
@@ -85,12 +90,14 @@
 ### Dimension 2: Input/Output Completeness (8.4/10) ✅
 
 **Strengths**:
+
 - Audio sample formats well-defined (16-24 bits, 2's complement)
 - Channel status structure detailed (192-bit blocks, 24 bytes)
 - Subframe structure explicit (32 time slots, 2 UI each)
 - HAL interface parameters specified (8 functions defined)
 
 **Gaps**:
+
 - **REQ-FUNC-AUDIO-001**: Missing input validation rules for PCM samples (overflow, NaN, denormals)
 - **REQ-FUNC-META-006**: CRCC input buffer boundary conditions not explicit
 - **REQ-FUNC-HAL-002**: `hal_transmit_bit()` missing error return value ranges
@@ -115,6 +122,7 @@ int hal_transmit_bit(
 ```
 
 **Recommendation**:
+
 - Add input validation section to REQ-FUNC-AUDIO-001 (PCM range checks)
 - Add error code documentation to all HAL function requirements
 - Add buffer size constraints to REQ-FUNC-META-006 (CRCC computation)
@@ -135,7 +143,7 @@ This is the **weakest dimension** requiring immediate attention.
    - ❌ What if input sample is NaN or infinity?
    - ❌ What if sample exceeds INT24_MAX?
    - ❌ How to handle denormalized floating-point inputs?
-   
+
 2. **REQ-FUNC-AUDIO-008** (Sampling Frequency):
    - ❌ What if frequency changes mid-stream?
    - ❌ How to handle sampling frequency mismatch between transmitter/receiver?
@@ -201,17 +209,20 @@ Create new document: `02-requirements/error-handling-specification.md`
 ### Dimension 4: Boundary Conditions (8.9/10) ✅
 
 **Strengths**:
+
 - Excellent bit depth boundaries (16-24 bits explicitly tested)
 - Sampling frequency ranges well-defined (16-384 kHz per AES5)
 - Time slot allocation boundaries clear (0-31, 2 UI each)
 - CRCC polynomial and initial conditions explicit
 
 **Minor Gaps**:
+
 - **REQ-FUNC-AUDIO-006** (DC Content): Missing quantitative DC offset threshold
 - **REQ-FUNC-TRANS-001** (Subframe Timing): Missing jitter tolerance at 384 kHz
 - **REQ-FUNC-HAL-006** (Jitter Measurement): Missing jitter measurement resolution
 
 **Recommendation**:
+
 ```markdown
 ## REQ-FUNC-AUDIO-006 Enhancement
 
@@ -234,16 +245,19 @@ Add explicit DC offset threshold:
 **Gaps Identified**:
 
 **Missing Percentile Targets**:
+
 - **REQ-PERF-AUDIO-001** has targets but no percentiles specified
   - ❌ Missing: 50th, 95th, 99th percentile targets
   - ❌ Missing: Load conditions (normal vs peak)
 
 **Missing Throughput Requirements**:
+
 - **Part 3**: No explicit throughput requirements
   - ❌ What is sustained frame rate at 192 kHz?
   - ❌ What is maximum burst rate?
 
 **Missing Resource Limits**:
+
 - **All Parts**: No memory or CPU usage limits
   - ❌ What is maximum memory per channel?
   - ❌ What is maximum CPU usage for encoding?
@@ -293,6 +307,7 @@ Create: `02-requirements/performance-targets.md`
 **This is the MOST CRITICAL gap requiring immediate attention.**
 
 **Current State**:
+
 - Only 2 requirements mention security (REQ-FUNC-AUDIO-005, REQ-FUNC-META-006)
 - No OWASP coverage
 - No input validation security policies
@@ -372,12 +387,14 @@ Scenario: Buffer overflow prevention
 **OWASP**: A03 - Injection
 
 The system SHALL prevent buffer overflows using:
+
 - Bounds checking on ALL array accesses
 - Safe string handling (strncpy, snprintf, never strcpy/sprintf)
 - Stack canaries (compiler option: -fstack-protector-strong)
 - Address Space Layout Randomization (ASLR) enabled
 
 **Acceptance Criteria**:
+
 ```gherkin
 Scenario: Stack buffer overflow prevention
   Given local buffer size is 256 bytes
@@ -394,10 +411,12 @@ Scenario: Stack buffer overflow prevention
 The system SHALL validate even parity bit (time slot 31) for ALL received subframes:
 
 **Detection**:
+
 - Compute parity over time slots 4-31
 - Compare with received parity bit
 
 **Action on Error**:
+
 - Set validity bit to logic 1 (invalid)
 - Increment parity error counter
 - Do NOT pass sample to DAC
@@ -407,11 +426,13 @@ The system SHALL validate even parity bit (time slot 31) for ALL received subfra
 **OWASP**: A08 - Data Integrity Failures
 
 The system SHALL maintain frame counter to detect:
+
 - Missing frames (gaps in sequence)
 - Duplicate frames (replay attacks)
 - Frame reordering
 
 **Counter**:
+
 - 32-bit unsigned integer
 - Wraps at 2^32 (49.7 days at 48 kHz)
 - Transmitted in reserved channel status bytes (optional extension)
@@ -423,14 +444,17 @@ The system SHALL maintain frame counter to detect:
 The system SHALL prevent resource exhaustion:
 
 **CPU Protection**:
+
 - Maximum processing time: 1 sample period per frame
 - Watchdog timer: Terminate if exceeded
 - Priority inversion prevention: Use priority ceiling protocol
 
 **Memory Protection**:
+
 - Pre-allocated buffers only (no dynamic allocation in real-time path)
 - Maximum memory per channel: 100 KB
 - Memory leak detection in debug builds
+
 ```
 
 **Impact**: **CRITICAL** - Security gaps create vulnerability to attacks
@@ -498,6 +522,7 @@ if (channel_status_byte2_bits_3_5 != actual_audio_word_length) {
 ```
 
 **Acceptance Criteria**:
+
 ```gherkin
 Scenario: Word length mismatch detection
   Given channel status byte 2 bits 3-5 indicate 20 bits
@@ -513,11 +538,13 @@ Scenario: Word length mismatch detection
 ### HAL Timing Requirements
 
 **UI Timing Propagation**:
+
 - HAL SHALL support UI durations from 1.3 µs (384 kHz) to 31.25 µs (16 kHz)
 - HAL timing accuracy: ±10 ppm per REQ-PERF-HAL-003
 - HAL jitter SHALL NOT exceed 0.025 UI per REQ-PERF-HAL-001
 
 **HAL Function Call Sequence**:
+
 ```c
 // 1. Configure sampling frequency (once at startup)
 hal_set_sampling_frequency(48000);
@@ -542,9 +569,11 @@ hal_free_buffer(buffer);
 ```
 
 **Thread Safety**:
+
 - HAL functions SHALL be thread-safe (reentrant)
 - Multiple channels MAY call HAL concurrently
 - Internal locking: HAL responsibility (not caller)
+
 ```
 
 **Impact**: **HIGH** - Integration details affect implementation coordination
@@ -586,6 +615,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 ### Dimension 10: Traceability (10.0/10) ✅ **PERFECT**
 
 **Exemplary Traceability**:
+
 - ✅ 100% of requirements have unique IDs (REQ-FUNC-XXX-###)
 - ✅ 100% linked to stakeholder requirements (StR-XXX-###)
 - ✅ 100% have AES3 specification references (Part X Clause Y.Z)
@@ -594,6 +624,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 - ✅ Traceability matrices provided for each part
 
 **Example of Excellent Traceability**:
+
 ```markdown
 ### REQ-FUNC-AUDIO-001: Linear PCM Encoding
 
@@ -674,6 +705,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 ### Nearly Complete (75-89/100) - 42 Requirements ⚠️
 
 **Part 1 (Audio Content) - 10 of 12 requirements**:
+
 - REQ-FUNC-AUDIO-001: 82/100 (Missing input validation, security)
 - REQ-FUNC-AUDIO-002: 85/100 (Missing phase coherence error scenarios)
 - REQ-FUNC-AUDIO-003: 88/100 (Strong overall)
@@ -686,6 +718,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 - REQ-PERF-AUDIO-001: 76/100 (Missing percentiles, load conditions)
 
 **Part 2 (Metadata/Subcode) - 8 of 9 requirements**:
+
 - REQ-FUNC-META-001: 81/100 (Missing user data overflow scenarios)
 - REQ-FUNC-META-002: 83/100 (Missing channel status sync loss)
 - REQ-FUNC-META-003: 88/100 (Strong overall)
@@ -696,6 +729,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 - REQ-PERF-META-001: 77/100 (Missing percentiles)
 
 **Part 3 (Transport) - 12 of 13 requirements**:
+
 - REQ-FUNC-TRANS-001: 84/100 (Missing jitter tolerance at 384 kHz)
 - REQ-FUNC-TRANS-002: 87/100 (Strong overall)
 - REQ-FUNC-TRANS-003: 86/100 (Missing preamble collision scenarios)
@@ -710,6 +744,7 @@ Scenario: PCM encoding latency measurement at 48 kHz
 - REQ-PERF-TRANS-003: 78/100 (Missing load conditions)
 
 **Part 4 (HAL Abstraction) - 12 of 15 requirements**:
+
 - REQ-FUNC-HAL-001: 89/100 (Excellent, minor HAL lifecycle gaps)
 - REQ-FUNC-HAL-002: 80/100 (Missing HAL timeout scenarios)
 - REQ-FUNC-HAL-003: 81/100 (Missing HAL error recovery)
@@ -833,19 +868,24 @@ Scenario: PCM encoding latency measurement at 48 kHz
 ### Week 6 (December 3-9, 2025) - Requirements Refinement Sprint
 
 **Day 1 (Dec 3)**:
+
 - Create `02-requirements/security-requirements.md` (8 hours)
 
 **Day 2 (Dec 4)**:
+
 - Create `02-requirements/performance-targets.md` (6 hours)
 - Begin `02-requirements/error-handling-specification.md` (2 hours)
 
 **Day 3 (Dec 5)**:
+
 - Complete `02-requirements/error-handling-specification.md` (10 hours)
 
 **Day 4 (Dec 6)**:
+
 - Create `02-requirements/integration-specification.md` (8 hours)
 
 **Day 5 (Dec 7)**:
+
 - Enhance Input/Output specifications (4 hours)
 - Add DC offset threshold (1 hour)
 - Add performance benchmarking scenarios (2 hours)
@@ -883,6 +923,7 @@ The AES3-2009 requirements elicitation has produced **high-quality functional sp
 **Next Audit**: After Week 6 refinements (December 9, 2025)
 
 **Audit Method**:
+
 - Manual review of all 49 requirements
 - 10-dimension completeness scoring per ISO/IEC/IEEE 29148:2018
 - Gap analysis against OWASP Top 10, AES3-2009 specifications
