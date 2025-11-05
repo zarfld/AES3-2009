@@ -63,6 +63,7 @@ This document specifies security requirements for the AES3-2009 Digital Audio In
 ### 1.2 Scope
 
 Security requirements cover:
+
 - **Input validation** for all external data sources (audio streams, metadata, channel status)
 - **Buffer overflow prevention** for all array accesses and memory operations
 - **Data integrity validation** using parity bits and CRCC checksums
@@ -91,12 +92,14 @@ Security requirements cover:
 ### 1.5 Security Threat Model
 
 **Assumptions**:
+
 - System processes audio streams from potentially untrusted sources
 - Malformed audio data may be intentionally crafted to exploit vulnerabilities
 - System operates in resource-constrained embedded environment
 - Physical layer security (AES3-4) handles transmission security
 
 **Out of Scope**:
+
 - Network layer attacks (not applicable to serial AES3 interface)
 - Cryptographic key management (AES3 transmits unencrypted audio)
 - User authentication (no user-facing interface in Standards layer)
@@ -115,6 +118,7 @@ Security requirements cover:
 Malformed audio streams can cause buffer overflows, out-of-bounds access, or undefined behavior if input parameters are not validated. Input validation is the first line of defense against injection attacks and data corruption.
 
 **OWASP References**:
+
 - **A03:2021 - Injection**: Prevent malicious data from exploiting parsing logic
 - **CWE-20**: Improper Input Validation
 - **CWE-129**: Improper Validation of Array Index
