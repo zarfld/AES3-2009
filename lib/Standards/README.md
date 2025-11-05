@@ -24,6 +24,7 @@ lib/Standards/
 All code follows the namespace pattern: `AES::AES3::<Part>::_2009::<module>`
 
 Examples:
+
 - `AES::AES3::Part1::_2009::audio_coding::PCMEncoder`
 - `AES::AES3::Part2::_2009::channel_status::ChannelStatusBlock`
 - `AES::AES3::Part3::_2009::biphase_mark::BiphaseMarkCoder`
@@ -32,12 +33,14 @@ Examples:
 ## Core Principles
 
 ### ✅ STANDARDS LAYER (IN SCOPE)
+
 - **ONLY AES3-2009 protocol logic** - no hardware-specific code
 - **Hardware agnostic** - compilable without any vendor drivers
 - **Mockable/testable** - runnable without physical audio hardware
 - **Dependency injection** - receives hardware abstraction via HAL interfaces
 
 ### ❌ PLATFORM LAYER (OUT OF SCOPE)
+
 - Hardware-specific drivers (ASIO, ALSA, CoreAudio, etc.)
 - Vendor-specific audio interfaces (Realtek, Intel, etc.)
 - OS-specific implementations (Windows, Linux, macOS)
@@ -50,6 +53,7 @@ The Standards layer interfaces with hardware through a minimal HAL interface (<1
 **Location**: `Common/interfaces/hal_interface.h`
 
 **8 HAL Functions**:
+
 1. `hal_transmit_bit()` - Biphase-mark output
 2. `hal_receive_bit()` - Biphase-mark input
 3. `hal_set_sampling_frequency()` - Clock configuration
@@ -85,11 +89,13 @@ add_library(standards_common STATIC ...)  # Common utilities
 ## Testing Approach
 
 ### Unit Testing (Hardware-Independent)
+
 - Mock HAL interface for protocol testing
 - Test AES3-2009 compliance without hardware
 - Located in `tests/unit/`
 
 ### Integration Testing (Service Layer)
+
 - Integration with real hardware happens in Service Layer
 - NOT in Standards layer
 
@@ -100,6 +106,7 @@ add_library(standards_common STATIC ...)  # Common utilities
 **No copyrighted content** from AES, IEEE, or AVnu documents is reproduced. All code is original work achieving compliance through understanding of specification requirements.
 
 For authoritative requirements, refer to:
+
 - AES3-1-2009 (R2014) - Part 1: Audio Content
 - AES3-2-2009 (R2014) - Part 2: Metadata and Subcode
 - AES3-3-2009 (R2014) - Part 3: Transport
@@ -110,6 +117,7 @@ Available from Audio Engineering Society: https://www.aes.org/
 ## Development Guidelines
 
 See `.github/instructions/copilot-instructions.md` for:
+
 - Standards layer architecture compliance
 - Forbidden patterns (hardware-specific code)
 - Required patterns (HAL abstraction)
