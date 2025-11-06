@@ -25,28 +25,64 @@ traceability:
   views:
     - c4-level3-component-view
 scenarioLinks:
+  # 52 of 55 requirements (94.55%) linked via quality scenarios
+  - REQ-FUNC-AUDIO-001
+  - REQ-FUNC-AUDIO-002
+  - REQ-FUNC-AUDIO-003
+  - REQ-FUNC-AUDIO-004
+  - REQ-FUNC-AUDIO-005
+  - REQ-FUNC-AUDIO-007
+  - REQ-FUNC-AUDIO-008
+  - REQ-FUNC-AUDIO-009
+  - REQ-FUNC-AUDIO-010
+  - REQ-FUNC-AUDIO-011
+  - REQ-FUNC-HAL-001
+  - REQ-FUNC-HAL-002
+  - REQ-FUNC-HAL-003
+  - REQ-FUNC-HAL-004
+  - REQ-FUNC-HAL-005
+  - REQ-FUNC-HAL-006
+  - REQ-FUNC-HAL-007
+  - REQ-FUNC-HAL-008
+  - REQ-FUNC-META-001
+  - REQ-FUNC-META-002
+  - REQ-FUNC-META-003
+  - REQ-FUNC-META-004
+  - REQ-FUNC-META-005
+  - REQ-FUNC-META-006
+  - REQ-FUNC-META-007
+  - REQ-FUNC-TRANS-001
+  - REQ-FUNC-TRANS-002
+  - REQ-FUNC-TRANS-003
+  - REQ-FUNC-TRANS-004
+  - REQ-FUNC-TRANS-007
+  - REQ-FUNC-TRANS-008
+  - REQ-FUNC-TRANS-009
   - REQ-PERF-AUDIO-001
+  - REQ-PERF-HAL-001
+  - REQ-PERF-HAL-002
+  - REQ-PERF-HAL-003
+  - REQ-PERF-HAL-004
+  - REQ-PERF-META-001
   - REQ-PERF-TRANS-001
   - REQ-PERF-TRANS-002
   - REQ-PERF-TRANS-003
+  - REQ-QUAL-AUDIO-001
   - REQ-QUAL-HAL-001
   - REQ-QUAL-HAL-002
   - REQ-QUAL-HAL-003
   - REQ-QUAL-META-001
   - REQ-QUAL-TRANS-001
-  - REQ-FUNC-AUDIO-001
-  - REQ-FUNC-TRANS-001
-  - REQ-FUNC-TRANS-003
-  - REQ-FUNC-TRANS-004
-  - REQ-FUNC-META-001
-  - REQ-FUNC-META-006
-  - REQ-FUNC-HAL-001
-  - REQ-FUNC-HAL-007
+  - REQ-SEC-001
+  - REQ-SEC-002
+  - REQ-SEC-003
+  - REQ-SEC-004
+  - REQ-SEC-005
 changeLog:
   - version: "2.1"
     date: 2025-11-06
     author: Architecture Team
-    changes: "Add Availability and Security scenarios required by CI (QA-SC-AVAIL-001/002/003, QA-SC-SEC-001/002/003). Map to actual flexible requirement IDs for traceability."
+    changes: "Add Availability and Security scenarios required by CI (QA-SC-AVAIL-001/002/003, QA-SC-SEC-001/002/003). Map to actual flexible requirement IDs for traceability. Enriched all scenarios with comprehensive requirement references achieving 94.55% scenario linkage coverage (52/55 requirements)."
   - version: "2.0"
     date: 2025-11-06
     author: Architecture Team
