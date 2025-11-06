@@ -543,3 +543,4 @@ status: verified
 1. QA-SC-PERF-004 (jitter measurement) - requires Audio Precision analyzer
 2. QA-SC-RELI-001 (signal loss) - requires hardware test setup
 3. QA-SC-PERF-003 (preamble detection) - requires jitter simulation
+
