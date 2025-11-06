@@ -110,6 +110,7 @@ jobs:
             - name: Run Performance Benchmarks
               if: matrix.build_type == 'Release'
               working-directory: ${{ github.workspace }}/05-implementation
+              shell: bash
               run: |
                   echo "🚀 Running performance benchmarks..."
                   ./build/${{ matrix.build_type == 'Release' && 'Release' || '' }}/bench_pcm_encoder${{ matrix.os == 'windows-latest' && '.exe' || '' }} || true
