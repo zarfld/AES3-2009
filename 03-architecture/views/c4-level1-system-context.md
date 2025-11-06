@@ -1,3 +1,13 @@
+---
+specType: architecture-view
+title: C4 Level 1 System Context
+phase: 03-architecture
+date: "2025-11-05"
+standard: ISO/IEC/IEEE 42010:2011
+model: C4
+view-level: context
+---
+
 # C4 Model - Level 1: System Context
 
 **Date**: 2025-11-05  

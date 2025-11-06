@@ -1,3 +1,12 @@
+---
+specType: architecture-decision
+title: ADR-002 Programming Language Selection
+phase: 03-architecture
+date: "2025-11-06"
+status: accepted
+decision-id: ADR-002
+---
+
 # ADR-002: Programming Language Selection (C++17 with Pure C HAL)
 
 **Status**: Accepted  

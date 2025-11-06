@@ -1,3 +1,12 @@
+---
+specType: architecture-decision
+title: ADR-001 Layered Architecture with Hardware Abstraction
+phase: 03-architecture
+date: "2025-11-06"
+status: accepted
+decision-id: ADR-001
+---
+
 # ADR-001: Layered Architecture with Hardware Abstraction
 
 **Status**: Accepted  

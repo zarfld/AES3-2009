@@ -1,3 +1,11 @@
+---
+specType: audit-report
+title: completeness-audit-part2-detailed
+phase: 02-requirements
+date: "2025-11-05"
+status: draft
+---
+
 # Part 2 Metadata and Subcode - Detailed Completeness Audit
 
 **Audit Date**: November 5, 2025  

@@ -1,3 +1,11 @@
+---
+specType: audit-report
+title: completeness-audit-cross-cutting-specs
+phase: 02-requirements
+date: "2025-11-05"
+status: draft
+---
+
 # Cross-Cutting Specifications - Completeness Audit
 
 **Audit Date**: November 5, 2025  

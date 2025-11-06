@@ -1,10 +1,11 @@
 ---
+specType: architecture-view
 title: "C4 Level 3 - Component View: AES3-2009 Digital Audio Interface"
 type: architecture-view
 view-level: component
 standard: "ISO/IEC/IEEE 42010:2011"
 model: "C4 Model"
-date: 2025-11-06
+date: "2025-11-06"
 version: "1.0"
 authors: ["Architecture Team"]
 reviewers: []

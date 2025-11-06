@@ -4,7 +4,7 @@ standard: ISO/IEC/IEEE 29148:2018
 phase: 02-requirements
 version: 1.0.0
 author: Requirements Elicitation Session
-date: 2025-11-05
+date: "2025-11-05"
 status: draft
 traceability:
   stakeholderRequirements:
