@@ -203,20 +203,21 @@ if(ENABLE_TESTING)
             LABELS "unit;mocks;infrastructure"
     )
     
-    # Integration Test: Transmit Path
-    add_executable(test_transmit_path_integration
-        ${AES3_TEST_DIR}/integration/test_transmit_path.cpp
+    # Integration Test: Transmit Path (Complete end-to-end chain)
+    add_executable(test_transmit_integration
+        ${AES3_TEST_DIR}/integration/test_transmit_integration.cpp
     )
-    target_link_libraries(test_transmit_path_integration
+    target_link_libraries(test_transmit_integration
         PRIVATE
             aes3_part1_audio_coding
             aes3_part3_transport
             aes3_mocks
             GTest::gtest_main
     )
-    gtest_discover_tests(test_transmit_path_integration
+    gtest_discover_tests(test_transmit_integration
         PROPERTIES
-            LABELS "integration;transmit"
+            LABELS "integration;transmit;end-to-end"
+            TIMEOUT 60
     )
 endif()
 

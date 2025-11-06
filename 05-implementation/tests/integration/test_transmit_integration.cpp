@@ -39,7 +39,7 @@ public:
     }
     
     ~MockHALWrapper() {
-        mock_audio_hal_cleanup();
+        // No cleanup function needed for mock HAL
     }
     
     void reset() {
@@ -72,16 +72,19 @@ class TransmitIntegrationTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Initialize PCM encoder with 24-bit word length
-        pcm_config = PCMEncoder::Config::Default();
-        pcm_config.word_length = WordLength::BITS_24;
-        pcm_encoder = std::make_unique<PCMEncoder>(pcm_config);
+        Config pcm_cfg;
+        pcm_cfg.word_length = WordLength::BITS_24;
+        pcm_cfg.pre_emphasis = PreEmphasis::NONE;
+        pcm_cfg.auto_validity = true;
+        pcm_cfg.validate_inputs = true;
+        pcm_encoder = std::make_unique<PCMEncoder>(pcm_cfg);
         
         // Initialize Subframe builder
-        SubframeBuilder::Config sf_config;
-        sf_config.word_length = WordLength::BITS_24;
-        sf_config.auto_parity = true;
-        sf_config.biphase_coding = false;
-        subframe_builder = std::make_unique<SubframeBuilder>(sf_config);
+        SubframeBuilder::Config sf_cfg;
+        sf_cfg.word_length = WordLength::BITS_24;
+        sf_cfg.auto_parity = true;
+        sf_cfg.biphase_coding = false;
+        subframe_builder = std::make_unique<SubframeBuilder>(sf_cfg);
         
         // Initialize Mock HAL wrapper
         mock_hal = std::make_unique<MockHALWrapper>();
@@ -104,7 +107,7 @@ protected:
                        uint8_t channel_bit,
                        SubframeBuilder::Preamble preamble) {
         // Step 1: Encode PCM sample
-        PCMEncoder::EncodedSample encoded;
+        EncodedSample encoded;
         int result = pcm_encoder->encode_sample(pcm_sample, true, encoded);
         if (result != 0) return result;
         
@@ -144,7 +147,6 @@ protected:
     std::unique_ptr<PCMEncoder> pcm_encoder;
     std::unique_ptr<SubframeBuilder> subframe_builder;
     std::unique_ptr<MockHALWrapper> mock_hal;
-    PCMEncoder::Config pcm_config;
 };
 
 // =============================================================================
@@ -223,14 +225,15 @@ TEST_F(TransmitIntegrationTest, MaxPositiveSample_24Bit_Success) {
     ASSERT_EQ(captured.size(), 1);
     SubframeData received(captured[0]);
     
-    // Count ones in audio slots (4-27) - should be 23 (all bits set except MSB)
+    // Count ones in audio slots (4-27) - each audio bit is stored in both bit positions
+    // 0x7FFFFF has 23 ones, stored twice = 46 ones total
     int ones_count = 0;
     for (size_t slot = SubframeData::AUDIO_START; slot <= SubframeData::AUDIO_END; ++slot) {
         uint8_t slot_value = received.get_bit(slot);
         if (slot_value & 0x01) ones_count++;
         if (slot_value & 0x02) ones_count++;
     }
-    EXPECT_EQ(ones_count, 23);  // 0x7FFFFF has 23 ones
+    EXPECT_EQ(ones_count, 46);  // 0x7FFFFF has 23 ones × 2 (both bit positions)
 }
 
 /**
@@ -393,11 +396,11 @@ TEST_F(TransmitIntegrationTest, Performance_StereoFrame_Under20Microseconds) {
 TEST_F(TransmitIntegrationTest, SampleSequence_DataIntegrity_Maintained) {
     // Arrange - Sequence of different samples
     std::vector<int32_t> samples = {
-        0x00000000,  // Zero
-        0x00400000,  // Positive mid-range
-        0x007FFFFF,  // Max positive
-        0xFF800000,  // Max negative
-        0xFFE00000   // Negative mid-range
+        static_cast<int32_t>(0x00000000),  // Zero
+        static_cast<int32_t>(0x00400000),  // Positive mid-range
+        static_cast<int32_t>(0x007FFFFF),  // Max positive
+        static_cast<int32_t>(0xFF800000),  // Max negative
+        static_cast<int32_t>(0xFFE00000)   // Negative mid-range
     };
     
     // Act - Transmit sequence
