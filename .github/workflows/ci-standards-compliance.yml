@@ -48,12 +48,32 @@ jobs:
       - name: Generate spec index
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/spec_parser.py
+          
       - name: Build traceability JSON
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py
+          
       - name: Generate requirement test skeletons
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/gen_tests.py
+          
+      - name: Verify generated files exist
+        run: |
+          echo "🔍 Verifying generated artifacts..."
+          ls -la build/
+          
+          if [ ! -f "build/spec-index.json" ]; then
+            echo "❌ ERROR: spec-index.json was not generated"
+            exit 1
+          fi
+          
+          if [ ! -f "build/traceability.json" ]; then
+            echo "❌ ERROR: traceability.json was not generated"
+            exit 1
+          fi
+          
+          echo "✅ All required artifacts generated successfully"
+          
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v4
         with:
