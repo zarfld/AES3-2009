@@ -84,8 +84,9 @@ jobs:
               working-directory: ${{ github.workspace }}/05-implementation
               run: |
                   echo "📊 Generating coverage report..."
-                  lcov --directory build --capture --output-file coverage.info --ignore-errors version,mismatch
-                  lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/_deps/*' --output-file coverage.info --ignore-errors unused
+                  # Use gcov-11 to match the GCC-11 that built the code
+                  lcov --directory build --capture --output-file coverage.info --gcov-tool gcov-${{ matrix.version }} --ignore-errors mismatch --ignore-errors empty
+                  lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/_deps/*' --output-file coverage.info --ignore-errors unused,empty
                   lcov --list coverage.info
 
                   # Check coverage threshold
