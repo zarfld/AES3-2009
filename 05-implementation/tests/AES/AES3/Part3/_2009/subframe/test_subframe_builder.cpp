@@ -16,6 +16,12 @@
  * - Biphase-mark coding simulation
  * - Frame synchronization
  * 
+ * Requirements Coverage:
+ * - REQ-FUNC-TRANS-001: Subframe Time Slot Structure (32 slots)
+ * - REQ-FUNC-TRANS-002: Time Slot Allocation (preamble, audio, metadata)
+ * - REQ-FUNC-TRANS-003: Preamble X, Y, Z Patterns
+ * - REQ-FUNC-TRANS-009: Even Parity Bit Generation
+ * 
  * @standard AES3-2009 Part 3: Transport (Subframe Structure, Section 4.1-4.3)
  * @copyright Copyright (c) 2024
  */
@@ -50,6 +56,7 @@ protected:
 
 /**
  * @test TEST-SFB-001: Default construction with 24-bit word length
+ * @verifies REQ-FUNC-TRANS-001 (Subframe Time Slot Structure)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, DefaultConstruction_24BitWordLength) {
@@ -64,6 +71,7 @@ TEST_F(SubframeBuilderTest, DefaultConstruction_24BitWordLength) {
 
 /**
  * @test TEST-SFB-002: Custom configuration
+ * @verifies REQ-FUNC-TRANS-001 (Subframe Time Slot Structure - configuration)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, CustomConfiguration_20BitWordLength) {
@@ -85,6 +93,7 @@ TEST_F(SubframeBuilderTest, CustomConfiguration_20BitWordLength) {
 
 /**
  * @test TEST-SFB-003: Preamble X pattern (channel A, block start)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X, Y, Z Patterns - X pattern)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.2.1
  * 
  * Preamble X (11100010 in biphase-mark):
@@ -106,6 +115,7 @@ TEST_F(SubframeBuilderTest, PreambleX_ChannelA_BlockStart) {
 
 /**
  * @test TEST-SFB-004: Preamble Y pattern (channel B, block start)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X, Y, Z Patterns - Y pattern)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.2.1
  */
 TEST_F(SubframeBuilderTest, PreambleY_ChannelB_BlockStart) {
@@ -123,6 +133,7 @@ TEST_F(SubframeBuilderTest, PreambleY_ChannelB_BlockStart) {
 
 /**
  * @test TEST-SFB-005: Preamble Z pattern (channel A, mid-block)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X, Y, Z Patterns - Z pattern)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.2.1
  */
 TEST_F(SubframeBuilderTest, PreambleZ_ChannelA_MidBlock) {
@@ -144,6 +155,7 @@ TEST_F(SubframeBuilderTest, PreambleZ_ChannelA_MidBlock) {
 
 /**
  * @test TEST-SFB-006: Build subframe with 24-bit audio sample
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - audio data in slots 4-27)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_24BitAudio_Success) {
@@ -169,6 +181,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_24BitAudio_Success) {
 
 /**
  * @test TEST-SFB-007: Build subframe with 20-bit audio sample
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - MSB justification)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_20BitAudio_MSBJustified) {
@@ -196,6 +209,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_20BitAudio_MSBJustified) {
 
 /**
  * @test TEST-SFB-008: Build subframe with zero audio sample
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - zero audio handling)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_ZeroAudio_ValidSubframe) {
@@ -220,6 +234,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ZeroAudio_ValidSubframe) {
 
 /**
  * @test TEST-SFB-009: Build subframe with negative audio sample (2's complement)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - 2's complement audio)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_NegativeAudio_TwosComplement) {
@@ -249,6 +264,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_NegativeAudio_TwosComplement) {
 
 /**
  * @test TEST-SFB-010: Validity bit set correctly (0=valid)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - validity bit in slot 28)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.1
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_Zero_Valid) {
@@ -268,6 +284,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_Zero_Valid) {
 
 /**
  * @test TEST-SFB-011: Validity bit set correctly (1=unreliable)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - validity bit unreliable flag)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_One_Unreliable) {
@@ -287,6 +304,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_One_Unreliable) {
 
 /**
  * @test TEST-SFB-012: User bit set correctly
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - user bit in slot 29)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.1
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_UserBit_Set) {
@@ -306,6 +324,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_UserBit_Set) {
 
 /**
  * @test TEST-SFB-013: Channel status bit set correctly
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - channel status in slot 30)
  * @traceability DES-C-004, AES3-2009 Part 2
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_ChannelStatusBit_Set) {
@@ -329,6 +348,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ChannelStatusBit_Set) {
 
 /**
  * @test TEST-SFB-014: Even parity calculated automatically
+ * @verifies REQ-FUNC-TRANS-009 (Even Parity Bit Generation and Validation)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.1
  */
 TEST_F(SubframeBuilderTest, BuildSubframe_AutoParity_EvenParity) {
@@ -361,6 +381,7 @@ TEST_F(SubframeBuilderTest, BuildSubframe_AutoParity_EvenParity) {
 
 /**
  * @test TEST-SFB-015: Parity calculation utility function
+ * @verifies REQ-FUNC-TRANS-009 (Even Parity Bit Generation - calculation algorithm)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, CalculateParity_ManualVerification) {
@@ -384,6 +405,8 @@ TEST_F(SubframeBuilderTest, CalculateParity_ManualVerification) {
 
 /**
  * @test TEST-SFB-016: Build stereo pair (X and Y preambles)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X, Y, Z Patterns - stereo pairing)
+ * @verifies REQ-FUNC-TRANS-005 (Frame Structure - stereo frame assembly)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildStereoPair_XandY_BlockStart) {
@@ -408,6 +431,8 @@ TEST_F(SubframeBuilderTest, BuildStereoPair_XandY_BlockStart) {
 
 /**
  * @test TEST-SFB-017: Build sequence Z-Y-Z-Y (mid-block pattern)
+ * @verifies REQ-FUNC-TRANS-005 (Frame Structure - mid-block frame sequence)
+ * @verifies REQ-FUNC-TRANS-006 (Block Structure - frame sequence in block)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, BuildSequence_ZYZY_MidBlock) {
@@ -434,6 +459,7 @@ TEST_F(SubframeBuilderTest, BuildSequence_ZYZY_MidBlock) {
 
 /**
  * @test TEST-SFB-018: Reset clears builder state
+ * @verifies REQ-FUNC-TRANS-001 (Subframe Time Slot Structure - state management)
  * @traceability DES-C-004
  */
 TEST_F(SubframeBuilderTest, Reset_ClearsState) {
