@@ -1,14 +1,13 @@
 name: CI - Standards Compliance & Quality Gates
 
 on:
-  push:
-    branches: [main, develop, "feature/**", "release/**"]
-  pull_request:
-    branches: [main, develop]
-  schedule:
-    # Run daily at 2 AM UTC
-    - cron: "0 2 * * 0"
-
+    push:
+        branches: [main, master, develop, "feature/**", "release/**"]
+    pull_request:
+        branches: [main, master, develop]
+    schedule:
+        # Run daily at 2 AM UTC
+        - cron: "0 2 * * 0"
 env:
   NODE_VERSION: "20.x"
   PYTHON_VERSION: "3.11"
