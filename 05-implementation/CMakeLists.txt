@@ -238,6 +238,19 @@ if(ENABLE_TESTING)
             LABELS "conformity;part3;transport;standards"
     )
     
+    # Test: Part 4 Conformity (AES3-4-2009 compliance - physical and electrical HAL)
+    add_executable(test_aes3_part4_hal_conformity
+        ${AES3_TEST_DIR}/AES/AES3/Part4/_2009/conformity/test_aes3_part4_hal_conformity.cpp
+    )
+    target_link_libraries(test_aes3_part4_hal_conformity
+        PRIVATE
+            GTest::gtest_main
+    )
+    gtest_discover_tests(test_aes3_part4_hal_conformity
+        PROPERTIES
+            LABELS "conformity;part4;hal;standards"
+    )
+    
     # Test: Mock Audio HAL
     add_executable(test_mock_audio_hal
         ${AES3_TEST_DIR}/Common/test_mock_audio_hal.cpp
