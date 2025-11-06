@@ -8,17 +8,17 @@ date: "2025-11-06"
 status: approved
 traceability:
   requirements:
-    - StR-PERF-001
-    - StR-PERF-002
-    - StR-PERF-003
-    - StR-QUAL-001
-    - StR-QUAL-002
-    - StR-QUAL-003
-    - StR-FUNC-001
-    - StR-FUNC-002
-    - StR-FUNC-003
-    - StR-FUNC-004
-    - StR-BUS-002
+    - REQ-PERF-NF-001
+    - REQ-PERF-NF-002
+    - REQ-PERF-NF-003
+    - REQ-QUAL-NF-001
+    - REQ-QUAL-NF-002
+    - REQ-QUAL-NF-003
+    - REQ-FUNC-F-001
+    - REQ-FUNC-F-002
+    - REQ-FUNC-F-003
+    - REQ-FUNC-F-004
+    - REQ-BUSI-F-002
   adrs:
     - ADR-001
     - ADR-002
