@@ -47,12 +47,12 @@ struct ChannelStatusBlock {
     // Byte 0 accessors (AES3-2-2009 Clause 5.5.0)
     bool is_professional() const { return (bytes[0] & 0x01) != 0; }
     void set_professional(bool prof) { 
-        if (prof) bytes[0] |= 0x01; else bytes[0] &= ~0x01; 
+        if (prof) bytes[0] |= 0x01; else bytes[0] &= static_cast<uint8_t>(~0x01); 
     }
     
     bool is_linear_pcm() const { return (bytes[0] & 0x02) == 0; }
     void set_linear_pcm(bool pcm) {
-        if (!pcm) bytes[0] |= 0x02; else bytes[0] &= ~0x02;
+        if (!pcm) bytes[0] |= 0x02; else bytes[0] &= static_cast<uint8_t>(~0x02);
     }
     
     uint8_t get_pre_emphasis() const { return (bytes[0] >> 2) & 0x07; }
@@ -62,7 +62,7 @@ struct ChannelStatusBlock {
     
     bool is_locked() const { return (bytes[0] & 0x20) == 0; }
     void set_lock_status(bool locked) {
-        if (!locked) bytes[0] |= 0x20; else bytes[0] &= ~0x20;
+        if (!locked) bytes[0] |= 0x20; else bytes[0] &= static_cast<uint8_t>(~0x20);
     }
     
     uint8_t get_sampling_frequency() const { return (bytes[0] >> 6) & 0x03; }
