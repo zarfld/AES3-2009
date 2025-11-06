@@ -207,13 +207,19 @@ jobs:
         with:
           name: spec-generated-artifacts
           path: build
-      - name: Check if traceability.json exists, regenerate if needed
+      - name: Check if artifacts downloaded successfully
         run: |
-          if [ ! -f "build/traceability.json" ]; then
-            echo "⚠️ traceability.json not found in artifacts, regenerating..."
-            ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py
-          else
+          if [ -f "build/traceability.json" ]; then
             echo "✅ traceability.json found in artifacts"
+          else
+            echo "⚠️ traceability.json not found in artifacts, regenerating all spec artifacts..."
+            # Run spec generation in correct order
+            echo "Step 1: Generate spec index..."
+            ALLOW_EMPTY_SPECS=1 python scripts/generators/spec_parser.py
+            echo "Step 2: Build traceability JSON..."
+            ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py
+            echo "Step 3: Verify files exist..."
+            ls -la build/ || echo "build/ directory doesn't exist"
           fi
       - name: Verify traceability.json exists
         run: |
@@ -223,6 +229,7 @@ jobs:
             ls -la build/ || echo "build/ directory doesn't exist"
             exit 1
           fi
+          echo "✅ traceability.json verified"
       - name: Enforce requirement linkage coverage
         run: |
           echo "📊 Checking traceability coverage..."
