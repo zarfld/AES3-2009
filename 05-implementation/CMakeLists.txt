@@ -57,10 +57,10 @@ else()
         -Wno-unused-parameter
     )
     
-    # C++17 features allowed (from ADR-002)
+    # C++17 features allowed (from ADR-002) - Apply only to C++ files
     add_compile_options(
-        -fno-exceptions      # No exceptions in real-time code
-        -fno-rtti            # No RTTI
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>      # No exceptions in real-time code
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>            # No RTTI
     )
     
     if(ENABLE_COVERAGE)

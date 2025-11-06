@@ -135,8 +135,8 @@ public:
         
         // Insert audio data (time slots 4-27, 24 bits)
         // Each audio bit occupies one time slot, stored in both bit positions
-        for (int bit = 0; bit < 24; ++bit) {
-            uint8_t audio_bit = (audio_sample >> (23 - bit)) & 0x01;
+        for (size_t bit = 0; bit < 24; ++bit) {
+            uint8_t audio_bit = (audio_sample >> (23 - bit)) & 0x01U;
             // Store audio bit in both positions of the time slot
             uint8_t slot_value = audio_bit | (audio_bit << 1);
             subframe.set_bit(SubframeData::AUDIO_START + bit, slot_value);
@@ -173,14 +173,14 @@ public:
     static inline uint8_t calculate_parity(const SubframeData& subframe) noexcept {
         // Count ones in time slots 4-30 (27 slots × 2 bits each = 54 bits)
         uint32_t ones = 0;
-        for (int slot = SubframeData::AUDIO_START; slot <= SubframeData::CHANNEL_STATUS_SLOT; ++slot) {
+        for (size_t slot = SubframeData::AUDIO_START; slot <= SubframeData::CHANNEL_STATUS_SLOT; ++slot) {
             uint8_t slot_value = subframe.get_bit(slot);
             // Count both bits in the 2-bit time slot
-            ones += (slot_value & 0x01) + ((slot_value >> 1) & 0x01);
+            ones += (slot_value & 0x01U) + ((slot_value >> 1) & 0x01U);
         }
         
         // Even parity: return 0 if even number of ones, 1 if odd
-        return ones & 0x01;
+        return static_cast<uint8_t>(ones & 0x01U);
     }
     
     /**
@@ -207,8 +207,8 @@ public:
         }
         
         // Insert 8-bit preamble pattern into time slots 0-3 (2 bits per slot)
-        for (int slot = 0; slot < 4; ++slot) {
-            uint8_t bit_pair = (pattern >> (slot * 2)) & 0x03;
+        for (size_t slot = 0; slot < 4; ++slot) {
+            uint8_t bit_pair = static_cast<uint8_t>((pattern >> (slot * 2)) & 0x03U);
             subframe.set_bit(slot, bit_pair);
         }
     }

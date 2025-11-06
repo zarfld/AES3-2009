@@ -358,7 +358,7 @@ private:
         }
         
         uint8_t aux_bits_count = 24 - wl;
-        uint8_t mask = (1 << aux_bits_count) - 1;
+        uint8_t mask = static_cast<uint8_t>((1U << aux_bits_count) - 1U);
         return static_cast<uint8_t>(pcm_data & mask);
     }
     
