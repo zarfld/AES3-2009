@@ -60,12 +60,7 @@ jobs:
 
             - name: Configure CMake
               working-directory: ${{ github.workspace }}/05-implementation
-              run: |
-                  cmake -B build -S . \
-                    -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-                    -DENABLE_TESTING=ON \
-                    -DENABLE_COVERAGE=${{ matrix.build_type == 'Debug' && matrix.os == 'ubuntu-latest' && 'ON' || 'OFF' }} \
-                    -DENABLE_BENCHMARKS=ON
+              run: cmake -B build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DENABLE_TESTING=ON -DENABLE_COVERAGE=${{ matrix.build_type == 'Debug' && matrix.os == 'ubuntu-latest' && 'ON' || 'OFF' }} -DENABLE_BENCHMARKS=ON
 
             - name: Build
               working-directory: ${{ github.workspace }}/05-implementation
@@ -245,11 +240,7 @@ jobs:
 
             - name: Configure CMake with clang-tidy
               working-directory: ${{ github.workspace }}/05-implementation
-              run: |
-                  cmake -B build -S . \
-                    -DCMAKE_BUILD_TYPE=Debug \
-                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-                    -DENABLE_TESTING=ON
+              run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_TESTING=ON
 
             - name: Run clang-tidy
               working-directory: ${{ github.workspace }}/05-implementation
