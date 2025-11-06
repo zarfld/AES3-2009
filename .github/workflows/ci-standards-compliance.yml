@@ -271,13 +271,13 @@ jobs:
           echo ""
           echo "📊 Traceability data summary:"
           python -c "import json; data=json.load(open('build/traceability.json')); print(f'Requirements: {len(data.get(\"requirements\", []))}'); print(f'Designs: {len(data.get(\"designs\", []))}'); print(f'Tests: {len(data.get(\"tests\", []))}')"
-      - name: Check requirement linkage coverage (advisory)
+      - name: Check requirement linkage coverage (ENFORCED)
         run: |
           echo "📊 Checking traceability coverage..."
           echo ""
-          echo "⚠️  NOTE: This check is currently ADVISORY during early development."
-          echo "    It reports real traceability status but doesn't block CI."
-          echo "    DO NOT fake traceability IDs to make this pass!"
+          echo "🔒 ENFORCEMENT ENABLED: Traceability is now a blocking quality gate!"
+          echo "    Requirements MUST have proper bidirectional linkage:"
+          echo "      StR → REQ → (ADR/QA) → DES → TEST"
           echo ""
           echo "Validating that requirements have proper linkage:"
           echo "  - Requirements → Architecture/Design"
@@ -287,17 +287,21 @@ jobs:
           ALLOW_EMPTY_SPECS=1 python scripts/validate-trace-coverage.py --min-req ${{ env.MIN_REQ_LINKAGE_COVERAGE }} || {
             EXIT_CODE=$?
             echo ""
-            echo "⚠️  Traceability validation found issues (exit code: $EXIT_CODE)"
-            echo "    This is EXPECTED during early development."
-            echo "    Action items:"
-            echo "    1. Create quality attribute scenarios (QA-*) in 03-architecture/"
-            echo "    2. Link scenarios to requirements using 'references:' in YAML front matter"
-            echo "    3. Create tests in 05-implementation/tests/ with TEST-* identifiers"
-            echo "    4. Link tests to requirements using comments or test names"
+            echo "❌ TRACEABILITY VALIDATION FAILED (exit code: $EXIT_CODE)"
             echo ""
-            echo "    Once traceability is established, remove 'continue-on-error: true'"
-            echo "    to enforce traceability as a quality gate."
-            exit 0
+            echo "Required actions to fix:"
+            echo "  1. Add @verifies REQ-XXX tags to all test files"
+            echo "  2. Create quality attribute scenarios (QA-*) in 03-architecture/"
+            echo "  3. Link scenarios to requirements using 'references:' in YAML front matter"
+            echo "  4. Ensure all requirements link to tests"
+            echo ""
+            echo "Current status should show:"
+            echo "  - Which requirements are missing test coverage"
+            echo "  - Which requirements are missing scenario coverage"
+            echo "  - What percentage of traceability is complete"
+            echo ""
+            echo "We added 33 test-to-requirement links. Check if they were extracted."
+            exit $EXIT_CODE
           }
 
   integrity-scan:
