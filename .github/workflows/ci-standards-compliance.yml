@@ -225,17 +225,32 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: spec-generated-artifacts
-          path: build
+          path: .
       - name: Verify traceability.json exists and is valid
         run: |
           echo "🔍 Checking for traceability.json..."
-          ls -la build/ || echo "build/ directory doesn't exist"
+          echo "Files in current directory:"
+          ls -la
+          echo ""
+          echo "Checking build/ subdirectory:"
+          ls -la build/ 2>/dev/null || echo "No build/ subdirectory"
+          echo ""
+          echo "Looking for traceability.json:"
+          find . -name "traceability.json" -type f
           
-          if [ ! -f "build/traceability.json" ]; then
+          # Check if file exists (could be in current dir or build/ subdir due to artifact behavior)
+          if [ -f "traceability.json" ]; then
+            echo "✅ Found traceability.json in current directory"
+            # Move it to build/ for consistency
+            mkdir -p build
+            mv traceability.json build/
+          elif [ -f "build/traceability.json" ]; then
+            echo "✅ Found traceability.json in build/ directory"
+          else
             echo "❌ FAILURE: traceability.json does not exist"
             echo ""
             echo "The spec-generation job should have created this file."
-            echo "Check the artifact upload/download steps."
+            echo "Artifact contents don't match expected structure."
             exit 1
           fi
           
