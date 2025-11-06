@@ -138,24 +138,24 @@ public:
         for (size_t bit = 0; bit < 24; ++bit) {
             uint8_t audio_bit = (audio_sample >> (23 - bit)) & 0x01U;
             // Store audio bit in both positions of the time slot
-            uint8_t slot_value = audio_bit | (audio_bit << 1);
+            uint8_t slot_value = static_cast<uint8_t>(audio_bit | (audio_bit << 1));
             subframe.set_bit(SubframeData::AUDIO_START + bit, slot_value);
         }
         
         // Insert validity bit (time slot 28) - store single bit in both positions
-        subframe.set_bit(SubframeData::VALIDITY_SLOT, (validity & 0x01) | ((validity & 0x01) << 1));
+        subframe.set_bit(SubframeData::VALIDITY_SLOT, static_cast<uint8_t>((validity & 0x01U) | ((validity & 0x01U) << 1)));
         
         // Insert user data bit (time slot 29) - store single bit in both positions
-        subframe.set_bit(SubframeData::USER_SLOT, (user_bit & 0x01) | ((user_bit & 0x01) << 1));
+        subframe.set_bit(SubframeData::USER_SLOT, static_cast<uint8_t>((user_bit & 0x01U) | ((user_bit & 0x01U) << 1)));
         
         // Insert channel status bit (time slot 30) - store single bit in both positions
-        subframe.set_bit(SubframeData::CHANNEL_STATUS_SLOT, (channel_bit & 0x01) | ((channel_bit & 0x01) << 1));
+        subframe.set_bit(SubframeData::CHANNEL_STATUS_SLOT, static_cast<uint8_t>((channel_bit & 0x01U) | ((channel_bit & 0x01U) << 1)));
         
         // Calculate and insert parity bit (time slot 31)
         if (config_.auto_parity) {
             uint8_t parity = calculate_parity(subframe);
             // Store single parity bit in both bit positions of slot 31
-            subframe.set_bit(SubframeData::PARITY_SLOT, parity | (parity << 1));
+            subframe.set_bit(SubframeData::PARITY_SLOT, static_cast<uint8_t>(parity | (parity << 1)));
         }
         
         return 0;
