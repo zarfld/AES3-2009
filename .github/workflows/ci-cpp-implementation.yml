@@ -100,12 +100,13 @@ jobs:
 
             - name: Upload Coverage to Codecov
               if: matrix.os == 'ubuntu-latest' && matrix.build_type == 'Debug'
+              continue-on-error: true
               uses: codecov/codecov-action@v4
               with:
                   files: ./05-implementation/coverage.info
                   flags: unittests
                   name: codecov-aes3-cpp
-                  fail_ci_if_error: true
+                  fail_ci_if_error: false
                   token: ${{ secrets.CODECOV_TOKEN }}
 
             - name: Run Performance Benchmarks
