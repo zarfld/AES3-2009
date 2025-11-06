@@ -133,14 +133,14 @@ target_compile_features(aes3_part3_transport PUBLIC cxx_std_17)
 # =============================================================================
 if(ENABLE_TESTING)
     add_library(aes3_mocks STATIC
-        ${AES3_MOCK_DIR}/mock_audio_hal.cpp
+        ${AES3_TEST_DIR}/Common/mock_audio_hal.c
     )
     target_include_directories(aes3_mocks
         PUBLIC
             ${AES3_INCLUDE_DIR}
-            ${AES3_MOCK_DIR}
+            ${AES3_TEST_DIR}/Common
     )
-    target_compile_features(aes3_mocks PUBLIC cxx_std_17)
+    target_compile_features(aes3_mocks PUBLIC c_std_11)
 endif()
 
 # =============================================================================
@@ -187,6 +187,20 @@ if(ENABLE_TESTING)
     gtest_discover_tests(test_subframe_builder
         PROPERTIES
             LABELS "unit;part3;transport"
+    )
+    
+    # Test: Mock Audio HAL
+    add_executable(test_mock_audio_hal
+        ${AES3_TEST_DIR}/Common/test_mock_audio_hal.cpp
+    )
+    target_link_libraries(test_mock_audio_hal
+        PRIVATE
+            aes3_mocks
+            GTest::gtest_main
+    )
+    gtest_discover_tests(test_mock_audio_hal
+        PROPERTIES
+            LABELS "unit;mocks;infrastructure"
     )
     
     # Integration Test: Transmit Path
