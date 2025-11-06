@@ -212,6 +212,19 @@ if(ENABLE_TESTING)
             LABELS "conformity;part1;audio;standards"
     )
     
+    # Test: Part 2 Conformity (AES3-2-2009 compliance - metadata and subcode)
+    add_executable(test_aes3_part2_conformity
+        ${AES3_TEST_DIR}/AES/AES3/Part2/_2009/conformity/test_aes3_part2_conformity.cpp
+    )
+    target_link_libraries(test_aes3_part2_conformity
+        PRIVATE
+            GTest::gtest_main
+    )
+    gtest_discover_tests(test_aes3_part2_conformity
+        PROPERTIES
+            LABELS "conformity;part2;metadata;standards"
+    )
+    
     # Test: Mock Audio HAL
     add_executable(test_mock_audio_hal
         ${AES3_TEST_DIR}/Common/test_mock_audio_hal.cpp
