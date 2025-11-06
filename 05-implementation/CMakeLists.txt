@@ -198,6 +198,20 @@ if(ENABLE_TESTING)
             LABELS "unit;part3;transport"
     )
     
+    # Test: Part 1 Conformity (AES3-1-2009 compliance)
+    add_executable(test_aes3_part1_conformity
+        ${AES3_TEST_DIR}/AES/AES3/Part1/_2009/conformity/test_aes3_part1_conformity_simple.cpp
+    )
+    target_link_libraries(test_aes3_part1_conformity
+        PRIVATE
+            aes3_part1_audio_coding
+            GTest::gtest_main
+    )
+    gtest_discover_tests(test_aes3_part1_conformity
+        PROPERTIES
+            LABELS "conformity;part1;audio;standards"
+    )
+    
     # Test: Mock Audio HAL
     add_executable(test_mock_audio_hal
         ${AES3_TEST_DIR}/Common/test_mock_audio_hal.cpp
