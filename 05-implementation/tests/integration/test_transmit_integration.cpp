@@ -242,7 +242,7 @@ TEST_F(TransmitIntegrationTest, MaxPositiveSample_24Bit_Success) {
  */
 TEST_F(TransmitIntegrationTest, MaxNegativeSample_24Bit_Success) {
     // Arrange
-    int32_t pcm_sample = 0xFF800000;  // Max negative 24-bit (sign-extended)
+    int32_t pcm_sample = static_cast<int32_t>(0xFF800000U);  // Max negative 24-bit (sign-extended)
     
     // Act
     int result = transmit_sample(pcm_sample, 0, 0, 0, SubframeBuilder::Preamble::X);

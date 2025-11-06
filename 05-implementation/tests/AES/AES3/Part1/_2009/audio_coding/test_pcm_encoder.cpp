@@ -43,7 +43,7 @@ protected:
     void VerifyMSBJustification(uint32_t audio_data, WordLength word_length, int32_t original_sample) {
         // Extract expected bit positions for MSB-justified data
         uint8_t shift = 24 - static_cast<uint8_t>(word_length);
-        uint32_t expected_mask = (0x00FFFFFF >> shift) << shift;
+        uint32_t expected_mask = (0x00FFFFFFU >> shift) << shift;
         
         (void)original_sample;  // Reserved for future validation
         

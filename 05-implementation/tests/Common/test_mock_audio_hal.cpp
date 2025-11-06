@@ -411,8 +411,15 @@ TEST_F(MockAudioHALTest, Stop_WhenRunning_Success) {
  */
 TEST_F(MockAudioHALTest, ErrorInjection_Init_Fails) {
     // Arrange
-    mock_error_config_t error_config = {0};
-    error_config.inject_init_error = true;
+    mock_error_config_t error_config = {
+        .inject_init_error = true,
+        .inject_send_error = false,
+        .inject_receive_error = false,
+        .inject_buffer_overflow = false,
+        .inject_buffer_underrun = false,
+        .fail_after_n_sends = 0,
+        .fail_after_n_receives = 0
+    };
     mock_audio_hal_set_error_config(&error_config);
     
     audio_hal_config_t config = {
@@ -442,8 +449,15 @@ TEST_F(MockAudioHALTest, ErrorInjection_SendFrames_Fails) {
     };
     hal_interface->init(&config);
     
-    mock_error_config_t error_config = {0};
-    error_config.inject_send_error = true;
+    mock_error_config_t error_config = {
+        .inject_init_error = false,
+        .inject_send_error = true,
+        .inject_receive_error = false,
+        .inject_buffer_overflow = false,
+        .inject_buffer_underrun = false,
+        .fail_after_n_sends = 0,
+        .fail_after_n_receives = 0
+    };
     mock_audio_hal_set_error_config(&error_config);
     
     int32_t frames[2] = {1000, 2000};
@@ -468,8 +482,15 @@ TEST_F(MockAudioHALTest, ErrorInjection_BufferOverflow_AfterNSends) {
     };
     hal_interface->init(&config);
     
-    mock_error_config_t error_config = {0};
-    error_config.fail_after_n_sends = 2;  // Fail after 2 successful sends
+    mock_error_config_t error_config = {
+        .inject_init_error = false,
+        .inject_send_error = false,
+        .inject_receive_error = false,
+        .inject_buffer_overflow = false,
+        .inject_buffer_underrun = false,
+        .fail_after_n_sends = 2,  // Fail after 2 successful sends
+        .fail_after_n_receives = 0
+    };
     mock_audio_hal_set_error_config(&error_config);
     
     int32_t frames[2] = {1000, 2000};
@@ -523,7 +544,7 @@ TEST_F(MockAudioHALTest, Timing_SendFrames_AdvancesClock) {
     // Allow 1% tolerance for integer division rounding
     EXPECT_NEAR(static_cast<double>(actual_elapsed), 
                 static_cast<double>(expected_elapsed), 
-                expected_elapsed * 0.01);
+                static_cast<double>(expected_elapsed) * 0.01);
 }
 
 /**
@@ -548,7 +569,7 @@ TEST_F(MockAudioHALTest, Timing_ManualAdvance_UpdatesClock) {
     // Allow 1% tolerance for integer division rounding
     EXPECT_NEAR(static_cast<double>(actual_elapsed), 
                 static_cast<double>(expected_elapsed), 
-                expected_elapsed * 0.01);
+                static_cast<double>(expected_elapsed) * 0.01);
 }
 
 // =============================================================================
