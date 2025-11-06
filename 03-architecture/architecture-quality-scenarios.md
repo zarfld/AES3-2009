@@ -8,20 +8,17 @@ date: "2025-11-06"
 status: approved
 traceability:
   requirements:
-    - REQ-PERF-AUDIO-001
-    - REQ-PERF-TRANS-001
-    - REQ-PERF-TRANS-002
-    - REQ-PERF-TRANS-003
-    - REQ-PERF-HAL-001
-    - REQ-PERF-HAL-002
-    - REQ-PERF-HAL-003
-    - REQ-PERF-HAL-004
-    - REQ-QUAL-HAL-001
-    - REQ-QUAL-HAL-002
-    - STR-PERF-001
-    - STR-PERF-002
-    - STR-PERF-003
-    - STR-QUAL-001
+    - StR-PERF-001
+    - StR-PERF-002
+    - StR-PERF-003
+    - StR-QUAL-001
+    - StR-QUAL-002
+    - StR-QUAL-003
+    - StR-FUNC-001
+    - StR-FUNC-002
+    - StR-FUNC-003
+    - StR-FUNC-004
+    - StR-BUS-002
   adrs:
     - ADR-001
     - ADR-002
@@ -63,6 +60,7 @@ status: draft | verified | at-risk
 ## Performance Scenarios
 
 ### QA-SC-PERF-001: PCM Encoding Latency Under Continuous 192 kHz Operation
+
 ```yaml
 id: QA-SC-PERF-001
 qualityAttribute: Performance
@@ -73,9 +71,9 @@ artifact: Part1/audio_coding/pcm_encoder.cpp
 response: PCM encoding completes within 1 sample period
 responseMeasure: p99 latency < 5.208 µs (1 sample period @ 192 kHz), WCET < 6 µs
 relatedRequirements:
-  - REQ-PERF-AUDIO-001
-  - STR-PERF-001
-  - STR-PERF-003
+  - StR-PERF-001
+  - StR-PERF-003
+  - StR-FUNC-001
 relatedADRs:
   - ADR-003
   - ADR-002
@@ -86,6 +84,7 @@ status: verified
 ```
 
 ### QA-SC-PERF-002: Biphase-Mark Encoding Performance at Maximum Sample Rate
+
 ```yaml
 id: QA-SC-PERF-002
 qualityAttribute: Performance
@@ -96,9 +95,9 @@ artifact: Part3/biphase_mark/biphase_coder.cpp
 response: Biphase encoding completes within subframe period
 responseMeasure: p99 latency < 2 µs per subframe, WCET < 3 µs
 relatedRequirements:
-  - REQ-PERF-TRANS-001
-  - STR-PERF-001
-  - STR-PERF-003
+  - StR-PERF-001
+  - StR-PERF-003
+  - StR-FUNC-003
 relatedADRs:
   - ADR-003
   - ADR-001
@@ -109,6 +108,7 @@ status: verified
 ```
 
 ### QA-SC-PERF-003: Preamble Detection with Sustained Jitter
+
 ```yaml
 id: QA-SC-PERF-003
 qualityAttribute: Performance
@@ -119,9 +119,9 @@ artifact: Part3/preambles/preamble_detector.cpp
 response: Preamble detected within 3 subframe periods, synchronization maintained
 responseMeasure: Detection rate > 99% within 3 subframes, false positive rate < 0.1%
 relatedRequirements:
-  - REQ-PERF-TRANS-003
-  - REQ-PERF-HAL-002
-  - STR-PERF-002
+  - StR-PERF-001
+  - StR-QUAL-001
+  - StR-FUNC-003
 relatedADRs:
   - ADR-003
   - ADR-001
@@ -132,6 +132,7 @@ status: draft
 ```
 
 ### QA-SC-PERF-004: HAL Transmitter Jitter Under Continuous Operation
+
 ```yaml
 id: QA-SC-PERF-004
 qualityAttribute: Performance
@@ -142,9 +143,9 @@ artifact: Part4/balanced/balanced_transmitter (HAL implementation)
 response: Transmitter maintains intrinsic jitter within specification
 responseMeasure: Measured jitter < 0.025 UI (130 ns @ 96 kHz) over entire 1-hour period
 relatedRequirements:
-  - REQ-PERF-HAL-001
-  - STR-PERF-002
-  - STR-QUAL-001
+  - StR-PERF-001
+  - StR-QUAL-001
+  - StR-FUNC-004
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -155,6 +156,7 @@ status: at-risk
 ```
 
 ### QA-SC-PERF-005: Unit Interval Timing Accuracy Across Temperature Range
+
 ```yaml
 id: QA-SC-PERF-005
 qualityAttribute: Performance
@@ -165,9 +167,9 @@ artifact: Part4/jitter/clock_generator (HAL implementation)
 response: UI timing accuracy maintained within specification
 responseMeasure: Timing error < 10 ppm across 0-40°C, drift < 20 ppm
 relatedRequirements:
-  - REQ-PERF-HAL-003
-  - STR-PERF-001
-  - STR-QUAL-001
+  - StR-PERF-001
+  - StR-QUAL-001
+  - StR-FUNC-004
 relatedADRs:
   - ADR-001
   - ADR-002
@@ -180,6 +182,7 @@ status: draft
 ## Reliability Scenarios
 
 ### QA-SC-RELI-001: Graceful Degradation on Signal Loss
+
 ```yaml
 id: QA-SC-RELI-001
 qualityAttribute: Reliability
@@ -190,8 +193,8 @@ artifact: Part4/HAL + Part3/frame/frame_assembler.cpp
 response: Signal loss detected, Standards layer notified, mute output, attempt recovery
 responseMeasure: Detection < 2 ms, no crash/corruption, auto-recovery on signal return < 10 ms
 relatedRequirements:
-  - REQ-FUNC-HAL-007
-  - STR-PERF-003
+  - StR-FUNC-004
+  - StR-PERF-003
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -202,6 +205,7 @@ status: draft
 ```
 
 ### QA-SC-RELI-002: Channel Status CRCC Validation Under Bit Errors
+
 ```yaml
 id: QA-SC-RELI-002
 qualityAttribute: Reliability
@@ -212,8 +216,8 @@ artifact: Part2/channel_status/crcc_validator.cpp
 response: CRCC validation detects error, invalid block rejected, previous valid block retained
 responseMeasure: Detection rate > 99.9%, no invalid data propagated to application
 relatedRequirements:
-  - REQ-FUNC-META-005
-  - STR-QUAL-001
+  - StR-FUNC-002
+  - StR-QUAL-001
 relatedADRs:
   - ADR-003
 relatedViews:
@@ -223,6 +227,7 @@ status: draft
 ```
 
 ### QA-SC-RELI-003: Sustained Operation Under Memory Constraints
+
 ```yaml
 id: QA-SC-RELI-003
 qualityAttribute: Reliability
@@ -233,9 +238,8 @@ artifact: Entire Standards Layer (all Parts)
 response: No memory leaks, no buffer overflows, stable operation
 responseMeasure: RAM usage ≤ 16 KB throughout, no memory allocation in real-time path
 relatedRequirements:
-  - STR-PERF-003
-  - REQ-PERF-AUDIO-001
-  - REQ-PERF-TRANS-001
+  - StR-PERF-002
+  - StR-PERF-003
 relatedADRs:
   - ADR-002
   - ADR-001
@@ -248,6 +252,7 @@ status: draft
 ## Portability Scenarios
 
 ### QA-SC-PORT-001: Platform Migration - ARM Cortex-M7 to RISC-V
+
 ```yaml
 id: QA-SC-PORT-001
 qualityAttribute: Portability
@@ -258,9 +263,9 @@ artifact: lib/Standards/AES/AES3/2009/ (all Parts)
 response: Standards layer compiles without modification, HAL interface ported
 responseMeasure: Zero modifications to Standards layer, < 10 HAL functions to implement
 relatedRequirements:
-  - REQ-QUAL-HAL-001
-  - REQ-FUNC-HAL-001
-  - STR-BUS-002
+  - StR-QUAL-003
+  - StR-FUNC-004
+  - StR-BUS-002
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -271,6 +276,7 @@ status: verified
 ```
 
 ### QA-SC-PORT-002: Compiler Compatibility - MSVC to IAR
+
 ```yaml
 id: QA-SC-PORT-002
 qualityAttribute: Portability
@@ -281,8 +287,8 @@ artifact: lib/Standards/ (C++17 Standards implementation)
 response: Successful compilation with IAR, all tests pass
 responseMeasure: Zero code changes required (C++17 standard compliance), test pass rate 100%
 relatedRequirements:
-  - REQ-QUAL-HAL-001
-  - STR-QUAL-001
+  - StR-QUAL-003
+  - StR-QUAL-001
 relatedADRs:
   - ADR-002
   - ADR-001
@@ -295,6 +301,7 @@ status: draft
 ## Maintainability Scenarios
 
 ### QA-SC-MAINT-001: HAL Interface Stability Across Standards Updates
+
 ```yaml
 id: QA-SC-MAINT-001
 qualityAttribute: Maintainability
@@ -305,9 +312,8 @@ artifact: Part2/channel_status/ components
 response: Changes isolated to Part2 namespace, zero HAL interface modifications
 responseMeasure: HAL function count remains ≤ 10, no platform re-integration required
 relatedRequirements:
-  - REQ-QUAL-HAL-002
-  - REQ-FUNC-HAL-001
-  - STR-BUS-002
+  - StR-FUNC-004
+  - StR-BUS-002
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -318,6 +324,7 @@ status: draft
 ```
 
 ### QA-SC-MAINT-002: Requirement Traceability During Code Review
+
 ```yaml
 id: QA-SC-MAINT-002
 qualityAttribute: Maintainability
@@ -328,8 +335,8 @@ artifact: Part1/audio_coding/pcm_encoder.cpp + test_pcm_encoder.cpp
 response: All modified functions have requirement links (@verifies tags), tests updated
 responseMeasure: 100% requirement traceability maintained, test coverage ≥ 95%
 relatedRequirements:
-  - STR-QUAL-002
-  - REQ-FUNC-AUDIO-001
+  - StR-QUAL-002
+  - StR-FUNC-001
 relatedADRs:
   - ADR-003
 relatedViews:
@@ -339,20 +346,21 @@ status: verified
 ```
 
 ## Coverage Matrix
+
 | Scenario ID | Quality Attribute | Requirements | ADRs | Views | Validation | Status |
 |-------------|-------------------|--------------|------|-------|------------|--------|
-| QA-SC-PERF-001 | Performance | REQ-PERF-AUDIO-001, STR-PERF-001/003 | ADR-003, ADR-002 | c4-level3 | benchmark | verified |
-| QA-SC-PERF-002 | Performance | REQ-PERF-TRANS-001, STR-PERF-001/003 | ADR-003, ADR-001 | c4-level3 | benchmark | verified |
-| QA-SC-PERF-003 | Performance | REQ-PERF-TRANS-003, REQ-PERF-HAL-002, STR-PERF-002 | ADR-003, ADR-001 | c4-level3 | simulation | draft |
-| QA-SC-PERF-004 | Performance | REQ-PERF-HAL-001, STR-PERF-002, STR-QUAL-001 | ADR-001, ADR-003 | c4-level3 | test | at-risk |
-| QA-SC-PERF-005 | Performance | REQ-PERF-HAL-003, STR-PERF-001, STR-QUAL-001 | ADR-001, ADR-002 | c4-level3 | test | draft |
-| QA-SC-RELI-001 | Reliability | REQ-FUNC-HAL-007, STR-PERF-003 | ADR-001, ADR-003 | c4-level3 | test | draft |
-| QA-SC-RELI-002 | Reliability | REQ-FUNC-META-005, STR-QUAL-001 | ADR-003 | c4-level3 | simulation | draft |
-| QA-SC-RELI-003 | Reliability | STR-PERF-003, REQ-PERF-AUDIO-001, REQ-PERF-TRANS-001 | ADR-002, ADR-001 | c4-level3 | test | draft |
-| QA-SC-PORT-001 | Portability | REQ-QUAL-HAL-001, REQ-FUNC-HAL-001, STR-BUS-002 | ADR-001, ADR-003 | c4-level3 | inspection | verified |
-| QA-SC-PORT-002 | Portability | REQ-QUAL-HAL-001, STR-QUAL-001 | ADR-002, ADR-001 | c4-level3 | test | draft |
-| QA-SC-MAINT-001 | Maintainability | REQ-QUAL-HAL-002, REQ-FUNC-HAL-001, STR-BUS-002 | ADR-001, ADR-003 | c4-level3 | inspection | draft |
-| QA-SC-MAINT-002 | Maintainability | STR-QUAL-002, REQ-FUNC-AUDIO-001 | ADR-003 | c4-level3 | inspection | verified |
+| QA-SC-PERF-001 | Performance | StR-PERF-001, StR-PERF-003, StR-FUNC-001 | ADR-003, ADR-002 | c4-level3 | benchmark | verified |
+| QA-SC-PERF-002 | Performance | StR-PERF-001, StR-PERF-003, StR-FUNC-003 | ADR-003, ADR-001 | c4-level3 | benchmark | verified |
+| QA-SC-PERF-003 | Performance | StR-PERF-001, StR-QUAL-001, StR-FUNC-003 | ADR-003, ADR-001 | c4-level3 | simulation | draft |
+| QA-SC-PERF-004 | Performance | StR-PERF-001, StR-QUAL-001, StR-FUNC-004 | ADR-001, ADR-003 | c4-level3 | test | at-risk |
+| QA-SC-PERF-005 | Performance | StR-PERF-001, StR-QUAL-001, StR-FUNC-004 | ADR-001, ADR-002 | c4-level3 | test | draft |
+| QA-SC-RELI-001 | Reliability | StR-FUNC-004, StR-PERF-003 | ADR-001, ADR-003 | c4-level3 | test | draft |
+| QA-SC-RELI-002 | Reliability | StR-FUNC-002, StR-QUAL-001 | ADR-003 | c4-level3 | simulation | draft |
+| QA-SC-RELI-003 | Reliability | StR-PERF-002, StR-PERF-003 | ADR-002, ADR-001 | c4-level3 | test | draft |
+| QA-SC-PORT-001 | Portability | StR-QUAL-003, StR-FUNC-004, StR-BUS-002 | ADR-001, ADR-003 | c4-level3 | inspection | verified |
+| QA-SC-PORT-002 | Portability | StR-QUAL-003, StR-QUAL-001 | ADR-002, ADR-001 | c4-level3 | test | draft |
+| QA-SC-MAINT-001 | Maintainability | StR-FUNC-004, StR-BUS-002 | ADR-001, ADR-003 | c4-level3 | inspection | draft |
+| QA-SC-MAINT-002 | Maintainability | StR-QUAL-002, StR-FUNC-001 | ADR-003 | c4-level3 | inspection | verified |
 
 ## Definition of Done
 - [x] At least one scenario per prioritized quality attribute (Performance, Reliability, Portability, Maintainability)
