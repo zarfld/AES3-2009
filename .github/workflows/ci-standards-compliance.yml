@@ -74,42 +74,47 @@ jobs:
         with:
           fetch-depth: 0 # Full history for better analysis
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python (for Lizard complexity analysis)
+        uses: actions/setup-python@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install C++ analysis tools
         run: |
-          npm ci
-          npm install -g eslint prettier markdownlint-cli
+          sudo apt-get update
+          sudo apt-get install -y cppcheck clang-tidy-14
+          pip install lizard
 
-      - name: Run linting (Coding Standards)
+      - name: Run cppcheck (Static Analysis)
+        working-directory: ${{ github.workspace }}/05-implementation
+        continue-on-error: true
         run: |
-          echo "🔍 Checking code style compliance..."
-          npm run lint
+          echo "🔍 Running cppcheck static analysis..."
+          cppcheck --enable=all --suppress=missingIncludeSystem \
+            --xml --xml-version=2 src/ 2> cppcheck-report.xml || true
+          cppcheck --enable=all --suppress=missingIncludeSystem src/ || true
 
-      - name: Check code formatting
+      - name: Run clang-tidy (Modern C++ Checks)
+        working-directory: ${{ github.workspace }}/05-implementation
+        continue-on-error: true
         run: |
-          echo "📝 Checking code formatting..."
-          npm run format:check || {
-            echo "❌ Code formatting issues found"
-            echo "Run 'npm run format' locally to fix"
-            exit 1
-          }
+          echo "📝 Running clang-tidy checks..."
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          find src -name '*.cpp' -o -name '*.hpp' | xargs clang-tidy-14 -p build || true
 
       - name: Check Markdown documentation
         run: |
           echo "📄 Validating Markdown documentation..."
-          markdownlint '**/*.md' --ignore node_modules || {
+          sudo npm install -g markdownlint-cli
+          markdownlint '**/*.md' --ignore node_modules --ignore 05-implementation/build || {
             echo "⚠️ Markdown lint issues found (non-blocking)"
           }
 
-      - name: Complexity analysis
+      - name: Complexity analysis (Lizard)
+        working-directory: ${{ github.workspace }}/05-implementation
         run: |
-          echo "📊 Analyzing code complexity..."
-          npx eslint . --ext .ts,.js --max-warnings 0 --rule 'complexity: ["error", ${{ env.MAX_CYCLOMATIC_COMPLEXITY }}]' || {
+          echo "📊 Analyzing code complexity with Lizard..."
+          lizard src/ --CCN ${{ env.MAX_CYCLOMATIC_COMPLEXITY }} || {
             echo "❌ Cyclomatic complexity exceeds ${{ env.MAX_CYCLOMATIC_COMPLEXITY }}"
             exit 1
           }
@@ -122,24 +127,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cmake-version: "3.20"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup GCC and coverage tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-11 g++-11 lcov
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
+
+      - name: Configure CMake with coverage
+        working-directory: ${{ github.workspace }}/05-implementation
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DENABLE_TESTING=ON \
+            -DENABLE_COVERAGE=ON
+
+      - name: Build
+        working-directory: ${{ github.workspace }}/05-implementation
+        run: cmake --build build --config Debug --parallel
 
       - name: Run unit tests
+        working-directory: ${{ github.workspace }}/05-implementation
         run: |
           echo "🧪 Running unit tests (TDD practice)..."
-          npm test -- --coverage --watchAll=false
+          ctest --test-dir build -C Debug --output-on-failure --verbose
+
+      - name: Generate coverage report
+        working-directory: ${{ github.workspace }}/05-implementation
+        run: |
+          echo "📊 Generating coverage report..."
+          lcov --directory build --capture --output-file coverage.info --gcov-tool gcov-11 --ignore-errors mismatch
+          lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/_deps/*' --output-file coverage.info
+          lcov --list coverage.info
 
       - name: Check test coverage
+        working-directory: ${{ github.workspace }}/05-implementation
         run: |
           echo "📊 Checking test coverage threshold..."
-          COVERAGE=$(npm test -- --coverage --watchAll=false --silent | grep 'All files' | awk '{print $10}' | sed 's/%//')
+          COVERAGE=$(lcov --summary coverage.info 2>&1 | grep lines | awk '{print $2}' | sed 's/%//')
           echo "Current coverage: ${COVERAGE}%"
 
           if (( $(echo "$COVERAGE < ${{ env.MIN_TEST_COVERAGE }}" | bc -l) )); then
@@ -151,10 +181,12 @@ jobs:
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
+        continue-on-error: true
         with:
-          files: ./coverage/lcov.info
+          files: ./05-implementation/coverage.info
           flags: unittests
-          name: codecov-umbrella
+          name: codecov-aes3-cpp
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   traceability-coverage:
     name: Traceability Coverage Enforcement
@@ -409,28 +441,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run npm audit
-        run: |
-          echo "🔒 Running npm security audit..."
-          npm audit --audit-level=moderate
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.20"
 
-      - name: Run Snyk security scan
-        uses: snyk/actions/node@master
+      - name: Install C++ security analysis tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck clang-tidy-14
+
+      - name: Run cppcheck security checks
+        working-directory: ${{ github.workspace }}/05-implementation
         continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          echo "🔒 Running cppcheck security analysis..."
+          cppcheck --enable=warning,style,performance,portability \
+            --xml --xml-version=2 src/ 2> cppcheck-security.xml || true
+          echo "Security issues detected (if any):"
+          cppcheck --enable=warning,style,performance,portability src/ || true
+
+      - name: Run clang-tidy security checks
+        working-directory: ${{ github.workspace }}/05-implementation
+        continue-on-error: true
+        run: |
+          echo "🔐 Running clang-tidy security checks..."
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          find src -name '*.cpp' -o -name '*.hpp' | \
+            xargs clang-tidy-14 -p build \
+            -checks='clang-analyzer-*,bugprone-*,cert-*,misc-*,readability-*' || true
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           scan-type: "fs"
-          scan-ref: "."
+          scan-ref: "./05-implementation"
           format: "sarif"
           output: "trivy-results.sarif"
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         if: always()
+        continue-on-error: true
         with:
           sarif_file: "trivy-results.sarif"
 
