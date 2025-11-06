@@ -412,13 +412,13 @@ TEST_F(MockAudioHALTest, Stop_WhenRunning_Success) {
 TEST_F(MockAudioHALTest, ErrorInjection_Init_Fails) {
     // Arrange
     mock_error_config_t error_config = {
-        .inject_init_error = true,
-        .inject_send_error = false,
-        .inject_receive_error = false,
-        .inject_buffer_overflow = false,
-        .inject_buffer_underrun = false,
-        .fail_after_n_sends = 0,
-        .fail_after_n_receives = 0
+        true,   // inject_init_error
+        false,  // inject_send_error
+        false,  // inject_receive_error
+        false,  // inject_buffer_overflow
+        false,  // inject_buffer_underrun
+        0,      // fail_after_n_sends
+        0       // fail_after_n_receives
     };
     mock_audio_hal_set_error_config(&error_config);
     
@@ -450,13 +450,13 @@ TEST_F(MockAudioHALTest, ErrorInjection_SendFrames_Fails) {
     hal_interface->init(&config);
     
     mock_error_config_t error_config = {
-        .inject_init_error = false,
-        .inject_send_error = true,
-        .inject_receive_error = false,
-        .inject_buffer_overflow = false,
-        .inject_buffer_underrun = false,
-        .fail_after_n_sends = 0,
-        .fail_after_n_receives = 0
+        false,  // inject_init_error
+        true,   // inject_send_error
+        false,  // inject_receive_error
+        false,  // inject_buffer_overflow
+        false,  // inject_buffer_underrun
+        0,      // fail_after_n_sends
+        0       // fail_after_n_receives
     };
     mock_audio_hal_set_error_config(&error_config);
     
@@ -483,13 +483,13 @@ TEST_F(MockAudioHALTest, ErrorInjection_BufferOverflow_AfterNSends) {
     hal_interface->init(&config);
     
     mock_error_config_t error_config = {
-        .inject_init_error = false,
-        .inject_send_error = false,
-        .inject_receive_error = false,
-        .inject_buffer_overflow = false,
-        .inject_buffer_underrun = false,
-        .fail_after_n_sends = 2,  // Fail after 2 successful sends
-        .fail_after_n_receives = 0
+        false,  // inject_init_error
+        false,  // inject_send_error
+        false,  // inject_receive_error
+        false,  // inject_buffer_overflow
+        false,  // inject_buffer_underrun
+        2,      // fail_after_n_sends - Fail after 2 successful sends
+        0       // fail_after_n_receives
     };
     mock_audio_hal_set_error_config(&error_config);
     
