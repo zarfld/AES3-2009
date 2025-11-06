@@ -37,10 +37,11 @@ if(MSVC)
     add_compile_options(
         /W4           # Warning level 4
         /WX           # Treat warnings as errors
-        /std:c++17    # C++17 standard
         /permissive-  # Standards conformance
         /Zc:__cplusplus  # Report correct __cplusplus value
     )
+    # Apply C++17 standard only to CXX files, not C files
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/std:c++17>)
     if(ENABLE_COVERAGE)
         message(WARNING "Code coverage not supported on MSVC")
     endif()
