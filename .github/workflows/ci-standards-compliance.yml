@@ -206,26 +206,36 @@ jobs:
         with:
           name: spec-generated-artifacts
           path: build
-      - name: Verify traceability.json exists
+      - name: Verify traceability.json exists and is valid
         run: |
+          echo "🔍 Checking for traceability.json..."
+          ls -la build/ || echo "build/ directory doesn't exist"
+          
           if [ ! -f "build/traceability.json" ]; then
             echo "❌ FAILURE: traceability.json does not exist"
             echo ""
-            echo "This means the spec-generation job failed to create traceability data."
-            echo "Root causes:"
-            echo "  1. No specification files exist in 01-stakeholder-requirements/ or 02-requirements/"
-            echo "  2. Specification files don't follow the required format"
-            echo "  3. The build_trace_json.py script failed"
-            echo ""
-            echo "ACTION REQUIRED:"
-            echo "  - Create proper specification files following the templates in spec-kit-templates/"
-            echo "  - Ensure specs have correct YAML front matter with traceability IDs"
-            echo "  - Run 'python scripts/generators/build_trace_json.py' locally to test"
-            echo ""
-            ls -la build/ || echo "build/ directory doesn't exist"
+            echo "The spec-generation job should have created this file."
+            echo "Check the artifact upload/download steps."
             exit 1
           fi
+          
           echo "✅ traceability.json exists"
+          
+          # Verify it's valid JSON
+          if ! python -m json.tool build/traceability.json > /dev/null 2>&1; then
+            echo "❌ FAILURE: traceability.json is not valid JSON"
+            echo ""
+            echo "File contents:"
+            cat build/traceability.json
+            exit 1
+          fi
+          
+          echo "✅ traceability.json is valid JSON"
+          
+          # Show summary
+          echo ""
+          echo "📊 Traceability data summary:"
+          python -c "import json; data=json.load(open('build/traceability.json')); print(f'Requirements: {len(data.get(\"requirements\", []))}'); print(f'Designs: {len(data.get(\"designs\", []))}'); print(f'Tests: {len(data.get(\"tests\", []))}')"
       - name: Enforce requirement linkage coverage
         run: |
           echo "📊 Checking traceability coverage..."
