@@ -225,6 +225,19 @@ if(ENABLE_TESTING)
             LABELS "conformity;part2;metadata;standards"
     )
     
+    # Test: Part 3 Conformity (AES3-3-2009 compliance - transport)
+    add_executable(test_aes3_part3_conformity
+        ${AES3_TEST_DIR}/AES/AES3/Part3/_2009/conformity/test_aes3_part3_conformity.cpp
+    )
+    target_link_libraries(test_aes3_part3_conformity
+        PRIVATE
+            GTest::gtest_main
+    )
+    gtest_discover_tests(test_aes3_part3_conformity
+        PROPERTIES
+            LABELS "conformity;part3;transport;standards"
+    )
+    
     # Test: Mock Audio HAL
     add_executable(test_mock_audio_hal
         ${AES3_TEST_DIR}/Common/test_mock_audio_hal.cpp
