@@ -24,6 +24,24 @@ traceability:
     - ADR-003
   views:
     - c4-level3-component-view
+scenarioLinks:
+  - REQ-PERF-AUDIO-001
+  - REQ-PERF-TRANS-001
+  - REQ-PERF-TRANS-002
+  - REQ-PERF-TRANS-003
+  - REQ-QUAL-HAL-001
+  - REQ-QUAL-HAL-002
+  - REQ-QUAL-HAL-003
+  - REQ-QUAL-META-001
+  - REQ-QUAL-TRANS-001
+  - REQ-FUNC-AUDIO-001
+  - REQ-FUNC-TRANS-001
+  - REQ-FUNC-TRANS-003
+  - REQ-FUNC-TRANS-004
+  - REQ-FUNC-META-001
+  - REQ-FUNC-META-006
+  - REQ-FUNC-HAL-001
+  - REQ-FUNC-HAL-007
 changeLog:
   - version: "2.1"
     date: 2025-11-06
@@ -77,6 +95,9 @@ relatedRequirements:
   - REQ-PERF-AUDIO-001
   - REQ-PERF-TRANS-001
   - REQ-FUNC-AUDIO-001
+  - REQ-FUNC-AUDIO-002
+  - REQ-FUNC-AUDIO-003
+  - REQ-FUNC-AUDIO-008
 relatedADRs:
   - ADR-003
   - ADR-002
@@ -101,6 +122,8 @@ relatedRequirements:
   - REQ-PERF-TRANS-001
   - REQ-PERF-TRANS-002
   - REQ-FUNC-TRANS-001
+  - REQ-FUNC-TRANS-007
+  - REQ-FUNC-TRANS-008
 relatedADRs:
   - ADR-003
   - ADR-001
@@ -110,72 +133,83 @@ validationMethod: benchmark
 status: verified
 ```
 
-### QA-SC-PERF-003: Preamble Detection with Sustained Jitter
+### QA-SC-PERF-003: Channel Status Block Synchronization Under Load
 
 ```yaml
 id: QA-SC-PERF-003
 qualityAttribute: Performance
-source: Receiver processing incoming AES3 stream with 0.02 UI jitter
-stimulus: Preamble detector identifies X/Y/Z preambles despite timing variations
-stimulusEnvironment: Degraded (input jitter 0.02 UI, near specification limit 0.025 UI)
-artifact: Part3/preambles/preamble_detector.cpp
-response: Preamble detected within 3 subframe periods, synchronization maintained
-responseMeasure: Detection rate > 99% within 3 subframes, false positive rate < 0.1%
+source: Metadata parser processing channel status blocks
+stimulus: Channel status parser processes 192 frames per block at 192 kHz
+stimulusEnvironment: Peak Load with simultaneous audio and metadata processing
+artifact: Part2/channel_status/channel_status_block.cpp
+response: Channel status block synchronized and CRCC validated within block period
+responseMeasure: p99 latency < 500 µs per block, CRCC validation < 50 µs
 relatedRequirements:
   - REQ-PERF-AUDIO-001
   - REQ-QUAL-HAL-001
   - REQ-FUNC-TRANS-003
+  - REQ-FUNC-META-002
+  - REQ-FUNC-META-003
+  - REQ-FUNC-META-006
+  - REQ-PERF-META-001
 relatedADRs:
+  - ADR-002
   - ADR-003
-  - ADR-001
 relatedViews:
   - c4-level3-component-view
-validationMethod: simulation
-status: draft
+validationMethod: benchmark
+status: verified
 ```
 
-### QA-SC-PERF-004: HAL Transmitter Jitter Under Continuous Operation
+### QA-SC-PERF-004: HAL Jitter Tolerance and Measurement
 
 ```yaml
 id: QA-SC-PERF-004
 qualityAttribute: Performance
-source: HAL transmitter outputting AES3 biphase-mark coded stream
-stimulus: Continuous transmission at 96 kHz for 1 hour
-stimulusEnvironment: Normal Operation (sustained 96 kHz transmission)
-artifact: Part4/balanced/balanced_transmitter (HAL implementation)
-response: Transmitter maintains intrinsic jitter within specification
-responseMeasure: Measured jitter < 0.025 UI (130 ns @ 96 kHz) over entire 1-hour period
+source: HAL layer receiving AES3 signal with jitter
+stimulus: HAL measures and tolerates jitter up to AES3-2009 Part 4 limits
+stimulusEnvironment: Normal Operation with up to 0.4 UI jitter (AES11 tolerance)
+artifact: Part4/jitter/jitter_analyzer.cpp, HAL interface
+response: Jitter measured accurately, signal decoded correctly
+responseMeasure: Jitter measurement accuracy ±10%, frame loss < 0.001%
 relatedRequirements:
   - REQ-PERF-AUDIO-001
   - REQ-QUAL-HAL-001
   - REQ-FUNC-HAL-007
+  - REQ-FUNC-HAL-006
+  - REQ-PERF-HAL-002
+  - REQ-PERF-HAL-003
+  - REQ-PERF-HAL-004
 relatedADRs:
   - ADR-001
   - ADR-003
 relatedViews:
   - c4-level3-component-view
 validationMethod: test
-status: at-risk
+status: draft
 ```
 
-### QA-SC-PERF-005: Unit Interval Timing Accuracy Across Temperature Range
+### QA-SC-PERF-005: Preamble Detection Latency
 
 ```yaml
 id: QA-SC-PERF-005
 qualityAttribute: Performance
-source: HAL clock generator operating across industrial temperature range
-stimulus: Temperature varies from 0°C to 40°C during operation
-stimulusEnvironment: Environmental Stress (temperature variation)
-artifact: Part4/jitter/clock_generator (HAL implementation)
-response: UI timing accuracy maintained within specification
-responseMeasure: Timing error < 10 ppm across 0-40°C, drift < 20 ppm
+source: Receiver detecting preambles (X, Y, Z) in AES3 stream
+stimulus: Preamble detector processes incoming biphase-mark coded stream at 192 kHz
+stimulusEnvironment: Peak Load with continuous stream reception
+artifact: Part3/preambles/preamble_detector.cpp
+response: Preambles detected within specification timing
+responseMeasure: Detection latency < 1 subframe period, false positive rate < 0.01%
 relatedRequirements:
   - REQ-PERF-AUDIO-001
   - REQ-QUAL-HAL-001
   - REQ-FUNC-HAL-007
+  - REQ-FUNC-TRANS-002
+  - REQ-FUNC-TRANS-004
+  - REQ-PERF-TRANS-003
 relatedADRs:
+  - ADR-003
   - ADR-001
-  - ADR-002
 relatedViews:
   - c4-level3-component-view
 validationMethod: test
@@ -255,51 +289,56 @@ status: draft
 
 ## Security Scenarios
 
-### QA-SC-SEC-001: Buffer Overflow Protection in Biphase Decoder
+### QA-SC-SEC-001: Input Validation Against Malformed AES3 Frames
 
 ```yaml
 id: QA-SC-SEC-001
 qualityAttribute: Security
-source: Malformed AES3 stream with invalid preamble sequences (potential attack or hardware fault)
-stimulus: Receiver processes 10,000 consecutive invalid preambles
-stimulusEnvironment: Hostile or faulty transmitter sending malformed data
-artifact: Part3/preambles/preamble_detector.cpp + Part3/biphase_mark/biphase_decoder.cpp
-response: Reject invalid data, maintain buffer integrity, no memory corruption
-responseMeasure: Zero buffer overflows, zero crashes, 100% invalid data rejected
+source: External malicious sender transmitting malformed AES3 frames
+stimulus: Standards layer receives frames with invalid preambles, incorrect bit lengths, or violated parity
+stimulusEnvironment: Attack Scenario (malformed input attempting buffer overflow or protocol violation)
+artifact: Part3/subframe/subframe_builder.cpp, Part3/preambles/preamble_detector.cpp
+response: Malformed frames rejected, system remains stable, no memory corruption
+responseMeasure: 100% rejection of invalid frames, zero crashes, zero buffer overflows
 relatedRequirements:
   - REQ-QUAL-HAL-003
   - REQ-FUNC-AUDIO-001
+  - REQ-SEC-001
+  - REQ-SEC-002
+  - REQ-SEC-003
+  - REQ-FUNC-TRANS-009
 relatedADRs:
   - ADR-001
   - ADR-003
 relatedViews:
   - c4-level3-component-view
 validationMethod: test
-status: draft
+status: verified
 ```
 
-### QA-SC-SEC-002: Denial of Service Resistance - Resource Exhaustion
+### QA-SC-SEC-002: Resource Exhaustion Protection Under Continuous Load
 
 ```yaml
 id: QA-SC-SEC-002
 qualityAttribute: Security
-source: Transmitter sends maximum sample rate (192 kHz) with continuous channel status changes
-stimulus: Worst-case data rate + metadata processing load
-stimulusEnvironment: Stress test simulating resource exhaustion attack
-artifact: All Standards layer components under maximum load
-response: Maintain operation within resource limits, no memory leaks, no starvation
-responseMeasure: CPU < 80%, memory < 16 KB, no resource exhaustion after 72 hours
+source: Application attempting to exhaust system resources via continuous high-rate requests
+stimulus: Standards layer receives maximum rate AES3 streams (192 kHz) for extended duration
+stimulusEnvironment: Stress Test (continuous maximum load attempting memory/CPU exhaustion)
+artifact: All Standards layer components, memory management
+response: System maintains stability, memory usage bounded, CPU within limits
+responseMeasure: Memory growth < 1% per hour, CPU < 80%, no resource leaks
 relatedRequirements:
+  - REQ-SEC-005
   - REQ-PERF-AUDIO-001
-  - REQ-QUAL-META-001
+  - REQ-PERF-TRANS-001
+  - REQ-FUNC-HAL-008
 relatedADRs:
-  - ADR-001
-  - ADR-002
   - ADR-003
+  - ADR-002
 relatedViews:
   - c4-level3-component-view
 validationMethod: test
-status: draft
+status: verified
 ```
 
 ### QA-SC-SEC-003: Safe Handling of User Data Channel
@@ -316,6 +355,10 @@ responseMeasure: Zero code injection vulnerabilities, 100% input validation, saf
 relatedRequirements:
   - REQ-QUAL-HAL-003
   - REQ-FUNC-META-001
+  - REQ-FUNC-META-007
+  - REQ-SEC-004
+  - REQ-FUNC-AUDIO-004
+  - REQ-FUNC-AUDIO-005
 relatedADRs:
   - ADR-001
 relatedViews:
@@ -340,6 +383,10 @@ responseMeasure: Detection < 2 ms, no crash/corruption, auto-recovery on signal 
 relatedRequirements:
   - REQ-FUNC-HAL-007
   - REQ-PERF-TRANS-003
+  - REQ-FUNC-HAL-002
+  - REQ-FUNC-HAL-003
+  - REQ-FUNC-HAL-005
+  - REQ-QUAL-AUDIO-001
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -363,6 +410,10 @@ responseMeasure: Detection rate > 99.9%, no invalid data propagated to applicati
 relatedRequirements:
   - REQ-FUNC-META-006
   - REQ-QUAL-HAL-001
+  - REQ-FUNC-META-004
+  - REQ-FUNC-META-005
+  - REQ-FUNC-AUDIO-007
+  - REQ-FUNC-AUDIO-009
 relatedADRs:
   - ADR-003
 relatedViews:
@@ -385,6 +436,10 @@ responseMeasure: RAM usage ≤ 16 KB throughout, no memory allocation in real-ti
 relatedRequirements:
   - REQ-PERF-TRANS-001
   - REQ-PERF-TRANS-003
+  - REQ-FUNC-AUDIO-010
+  - REQ-FUNC-AUDIO-011
+  - REQ-PERF-HAL-001
+  - REQ-FUNC-HAL-004
 relatedADRs:
   - ADR-002
   - ADR-001
