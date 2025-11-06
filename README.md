@@ -57,8 +57,6 @@ This project applies **Extreme Programming (XP)** techniques throughout developm
 
 ## 📁 Repository Structure
 
-## 📁 Repository Structure
-
 ```text
 AES3-2009/
 ├── .github/
@@ -162,15 +160,18 @@ AES3-2009/
 ### Prerequisites
 
 **Compilers:**
+
 - **GCC 7.0+** or **Clang 5.0+** (C++17 support)
 - **MSVC 2017+** (19.10+) for Windows
 - **ARM GCC 9.0+** for embedded targets
 
 **Build Tools:**
+
 - **CMake 3.20** or later
 - **Git** for version control
 
 **Optional:**
+
 - **Google Test** (included via CMake FetchContent)
 - **Unity Test Framework** for embedded testing
 - **SEGGER SystemView** for real-time profiling
@@ -272,6 +273,7 @@ The AES3-2009 implementation follows a **5-layer architecture**:
 ```
 
 **Key Architectural Principles:**
+
 - **Hardware Abstraction**: Standards layer has ZERO platform dependencies
 - **Dependency Inversion**: High-level protocol depends on HAL abstraction, not concrete hardware
 - **Single Responsibility**: Each layer has one clear purpose
@@ -296,6 +298,7 @@ This project follows the **9-phase IEEE 12207 software lifecycle**:
 ### Current Phase: Phase 03 → Phase 04 Transition
 
 **Phase 03 Deliverables (Complete)**:
+
 - ✅ C4 Level 1: System Context
 - ✅ C4 Level 2: Container View
 - ✅ C4 Level 3: Component View
@@ -303,6 +306,7 @@ This project follows the **9-phase IEEE 12207 software lifecycle**:
 - ✅ ADR-002: Programming Language Selection (C++17/Pure C)
 
 **Phase 04 Next Steps**:
+
 - Detailed component designs for AES3-2009 Parts 1-4
 - HAL interface specifications (≤10 functions each)
 - API interface specifications
@@ -488,7 +492,7 @@ This project is licensed under the [MIT License](LICENSE.md).
 - **AES5-2018**: Preferred sampling frequencies for audio systems
 - **AES11-2009**: Digital audio reference signals
 
-### Related Standards
+### Related Standards References
 
 - **IEC 60958-1**: Digital audio interface - General
 - **IEC 60958-3**: Digital audio interface - Consumer applications
@@ -512,6 +516,7 @@ This project is licensed under the [MIT License](LICENSE.md).
 ## 🙏 Acknowledgments
 
 This project follows standards-based software engineering practices combining:
+
 - **IEEE/ISO/IEC standards** for lifecycle rigor
 - **Extreme Programming (XP)** for development agility
 - **AI-assisted development** with GitHub Copilot for productivity
