@@ -94,6 +94,7 @@ TEST_F(PCMEncoderTest, CustomConstruction_20BitWordLength) {
 
 /**
  * @test TEST-PCM-003: Runtime configuration change
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - runtime reconfiguration)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, SetConfig_ValidConfiguration_Success) {
@@ -115,6 +116,8 @@ TEST_F(PCMEncoderTest, SetConfig_ValidConfiguration_Success) {
 
 /**
  * @test TEST-PCM-004: Encode 24-bit sample (no justification needed)
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding with 2's complement)
+ * @verifies REQ-FUNC-AUDIO-002 (PCM Polarity Convention)
  * @traceability DES-C-003, REQ-FUNC-001, REQ-FUNC-002
  */
 TEST_F(PCMEncoderTest, Encode24BitSample_NoJustification_CorrectOutput) {
@@ -134,6 +137,7 @@ TEST_F(PCMEncoderTest, Encode24BitSample_NoJustification_CorrectOutput) {
 
 /**
  * @test TEST-PCM-005: Encode 20-bit sample with MSB justification
+ * @verifies REQ-FUNC-AUDIO-004 (MSB Justification for word lengths < 24 bits)
  * @traceability DES-C-003, REQ-FUNC-004
  */
 TEST_F(PCMEncoderTest, Encode20BitSample_MSBJustification_ShiftsLeft4Bits) {
@@ -156,6 +160,8 @@ TEST_F(PCMEncoderTest, Encode20BitSample_MSBJustification_ShiftsLeft4Bits) {
 
 /**
  * @test TEST-PCM-006: Encode negative 24-bit sample (2's complement)
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding with 2's complement)
+ * @verifies REQ-FUNC-AUDIO-002 (PCM Polarity Convention - negative samples)
  * @traceability DES-C-003, REQ-FUNC-002
  */
 TEST_F(PCMEncoderTest, EncodeNegative24BitSample_TwosComplement_CorrectOutput) {
@@ -174,6 +180,7 @@ TEST_F(PCMEncoderTest, EncodeNegative24BitSample_TwosComplement_CorrectOutput) {
 
 /**
  * @test TEST-PCM-007: Encode zero sample
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - zero value)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, EncodeZeroSample_OutputZero) {
@@ -192,6 +199,8 @@ TEST_F(PCMEncoderTest, EncodeZeroSample_OutputZero) {
 
 /**
  * @test TEST-PCM-008: Encode 22-bit sample with MSB justification
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 22-bit)
+ * @verifies REQ-FUNC-AUDIO-004 (MSB Justification for 22-bit)
  * @traceability DES-C-003, REQ-FUNC-003, REQ-FUNC-004
  */
 TEST_F(PCMEncoderTest, Encode22BitSample_MSBJustification_ShiftsLeft2Bits) {
@@ -216,6 +225,8 @@ TEST_F(PCMEncoderTest, Encode22BitSample_MSBJustification_ShiftsLeft2Bits) {
 
 /**
  * @test TEST-PCM-009: Encode 16-bit sample (optimized path)
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 16-bit)
+ * @verifies REQ-FUNC-AUDIO-004 (MSB Justification for 16-bit)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, Encode16BitSample_OptimizedPath_CorrectJustification) {
@@ -235,6 +246,8 @@ TEST_F(PCMEncoderTest, Encode16BitSample_OptimizedPath_CorrectJustification) {
 
 /**
  * @test TEST-PCM-010: Encode negative 16-bit sample
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding with 2's complement)
+ * @verifies REQ-FUNC-AUDIO-002 (PCM Polarity Convention - negative samples)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, EncodeNegative16BitSample_TwosComplement_CorrectOutput) {
@@ -257,6 +270,7 @@ TEST_F(PCMEncoderTest, EncodeNegative16BitSample_TwosComplement_CorrectOutput) {
 
 /**
  * @test TEST-PCM-011: Valid sample produces validity bit = 0
+ * @verifies REQ-FUNC-AUDIO-009 (Validity Bit Implementation - valid samples)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, EncodeValidSample_ValidityBitZero) {
@@ -274,6 +288,7 @@ TEST_F(PCMEncoderTest, EncodeValidSample_ValidityBitZero) {
 
 /**
  * @test TEST-PCM-012: Invalid sample produces validity bit = 1
+ * @verifies REQ-FUNC-AUDIO-009 (Validity Bit Implementation - invalid samples)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, EncodeInvalidSample_ValidityBitOne) {
@@ -295,6 +310,8 @@ TEST_F(PCMEncoderTest, EncodeInvalidSample_ValidityBitOne) {
 
 /**
  * @test TEST-PCM-013: 20-bit word length provides 4 auxiliary bits
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 20-bit)
+ * @verifies REQ-FUNC-AUDIO-004 (MSB Justification generates auxiliary bits)
  * @traceability DES-C-003, REQ-FUNC-003
  */
 TEST_F(PCMEncoderTest, Encode20BitSample_4AuxiliaryBits) {
@@ -322,6 +339,7 @@ TEST_F(PCMEncoderTest, Encode20BitSample_4AuxiliaryBits) {
 
 /**
  * @test TEST-PCM-014: 24-bit word length has 0 auxiliary bits
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 24-bit full precision)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, Encode24BitSample_0AuxiliaryBits) {
@@ -343,6 +361,7 @@ TEST_F(PCMEncoderTest, Encode24BitSample_0AuxiliaryBits) {
 
 /**
  * @test TEST-PCM-015: Multiple encodings maintain consistency
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - consistency across samples)
  * @traceability DES-C-003
  */
 TEST_F(PCMEncoderTest, MultipleEncodings_MaintainConsistency) {
