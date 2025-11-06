@@ -48,32 +48,32 @@ jobs:
       - name: Generate spec index
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/spec_parser.py
-          
+
       - name: Build traceability JSON
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/build_trace_json.py
-          
+
       - name: Generate requirement test skeletons
         run: |
           ALLOW_EMPTY_SPECS=1 python scripts/generators/gen_tests.py
-          
+
       - name: Verify generated files exist
         run: |
           echo "🔍 Verifying generated artifacts..."
           ls -la build/
-          
+
           if [ ! -f "build/spec-index.json" ]; then
             echo "❌ ERROR: spec-index.json was not generated"
             exit 1
           fi
-          
+
           if [ ! -f "build/traceability.json" ]; then
             echo "❌ ERROR: traceability.json was not generated"
             exit 1
           fi
-          
+
           echo "✅ All required artifacts generated successfully"
-          
+
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -237,7 +237,7 @@ jobs:
           echo ""
           echo "Looking for traceability.json:"
           find . -name "traceability.json" -type f
-          
+
           # Check if file exists (could be in current dir or build/ subdir due to artifact behavior)
           if [ -f "traceability.json" ]; then
             echo "✅ Found traceability.json in current directory"
@@ -253,9 +253,9 @@ jobs:
             echo "Artifact contents don't match expected structure."
             exit 1
           fi
-          
+
           echo "✅ traceability.json exists"
-          
+
           # Verify it's valid JSON
           if ! python -m json.tool build/traceability.json > /dev/null 2>&1; then
             echo "❌ FAILURE: traceability.json is not valid JSON"
@@ -264,15 +264,14 @@ jobs:
             cat build/traceability.json
             exit 1
           fi
-          
+
           echo "✅ traceability.json is valid JSON"
-          
+
           # Show summary
           echo ""
           echo "📊 Traceability data summary:"
           python -c "import json; data=json.load(open('build/traceability.json')); print(f'Requirements: {len(data.get(\"requirements\", []))}'); print(f'Designs: {len(data.get(\"designs\", []))}'); print(f'Tests: {len(data.get(\"tests\", []))}')"
       - name: Check requirement linkage coverage (advisory)
-        continue-on-error: true
         run: |
           echo "📊 Checking traceability coverage..."
           echo ""
