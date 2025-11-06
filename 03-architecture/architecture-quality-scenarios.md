@@ -1,4 +1,4 @@
-﻿---
+---
 specType: architecture
 standard: 42010
 phase: 03-architecture
@@ -8,24 +8,16 @@ date: "2025-11-06"
 status: approved
 traceability:
   requirements:
-    - REQ-PERF-AUDIO-001
-    - REQ-PERF-TRANS-001
-    - REQ-PERF-TRANS-002
-    - REQ-PERF-TRANS-003
-    - REQ-PERF-HAL-001
-    - REQ-PERF-HAL-003
-    - REQ-QUAL-AUDIO-001
-    - REQ-QUAL-TRANS-001
-    - REQ-QUAL-META-001
-    - REQ-QUAL-HAL-001
-    - REQ-QUAL-HAL-002
-    - REQ-FUNC-AUDIO-001
-    - REQ-FUNC-TRANS-001
-    - REQ-FUNC-TRANS-003
-    - REQ-FUNC-TRANS-004
-    - REQ-FUNC-META-006
-    - REQ-FUNC-HAL-001
-    - REQ-FUNC-HAL-007
+    - REQ-PERF-NF-001
+    - REQ-PERF-NF-002
+    - REQ-PERF-NF-003
+    - REQ-QUAL-NF-001
+    - REQ-QUAL-NF-002
+    - REQ-QUAL-NF-003
+    - REQ-FUNC-F-001
+    - REQ-FUNC-F-002
+    - REQ-FUNC-F-003
+    - REQ-FUNC-F-004
   adrs:
     - ADR-001
     - ADR-002
