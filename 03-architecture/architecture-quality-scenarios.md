@@ -1,4 +1,4 @@
----
+﻿---
 specType: architecture
 standard: 42010
 phase: 03-architecture
@@ -8,17 +8,24 @@ date: "2025-11-06"
 status: approved
 traceability:
   requirements:
-    - REQ-PERF-NF-001
-    - REQ-PERF-NF-002
-    - REQ-PERF-NF-003
-    - REQ-QUAL-NF-001
-    - REQ-QUAL-NF-002
-    - REQ-QUAL-NF-003
-    - REQ-FUNC-F-001
-    - REQ-FUNC-F-002
-    - REQ-FUNC-F-003
-    - REQ-FUNC-F-004
-    - REQ-BUSI-F-002
+    - REQ-PERF-AUDIO-001
+    - REQ-PERF-TRANS-001
+    - REQ-PERF-TRANS-002
+    - REQ-PERF-TRANS-003
+    - REQ-PERF-HAL-001
+    - REQ-PERF-HAL-003
+    - REQ-QUAL-AUDIO-001
+    - REQ-QUAL-TRANS-001
+    - REQ-QUAL-META-001
+    - REQ-QUAL-HAL-001
+    - REQ-QUAL-HAL-002
+    - REQ-FUNC-AUDIO-001
+    - REQ-FUNC-TRANS-001
+    - REQ-FUNC-TRANS-003
+    - REQ-FUNC-TRANS-004
+    - REQ-FUNC-META-006
+    - REQ-FUNC-HAL-001
+    - REQ-FUNC-HAL-007
   adrs:
     - ADR-001
     - ADR-002
@@ -29,7 +36,7 @@ changeLog:
   - version: "2.1"
     date: 2025-11-06
     author: Architecture Team
-    changes: "Add Availability and Security scenarios required by CI (QA-SC-AVAIL-001/002/003, QA-SC-SEC-001/002/003)"
+    changes: "Add Availability and Security scenarios required by CI (QA-SC-AVAIL-001/002/003, QA-SC-SEC-001/002/003). Map to actual flexible requirement IDs for traceability."
   - version: "2.0"
     date: 2025-11-06
     author: Architecture Team
@@ -75,9 +82,9 @@ artifact: Part1/audio_coding/pcm_encoder.cpp
 response: PCM encoding completes within 1 sample period
 responseMeasure: p99 latency < 5.208 µs (1 sample period @ 192 kHz), WCET < 6 µs
 relatedRequirements:
-  - StR-PERF-001
-  - StR-PERF-003
-  - StR-FUNC-001
+  - REQ-PERF-AUDIO-001
+  - REQ-PERF-TRANS-001
+  - REQ-FUNC-AUDIO-001
 relatedADRs:
   - ADR-003
   - ADR-002
@@ -99,9 +106,9 @@ artifact: Part3/biphase_mark/biphase_coder.cpp
 response: Biphase encoding completes within subframe period
 responseMeasure: p99 latency < 2 µs per subframe, WCET < 3 µs
 relatedRequirements:
-  - StR-PERF-001
-  - StR-PERF-003
-  - StR-FUNC-003
+  - REQ-PERF-TRANS-001
+  - REQ-PERF-TRANS-002
+  - REQ-FUNC-TRANS-001
 relatedADRs:
   - ADR-003
   - ADR-001
@@ -123,9 +130,9 @@ artifact: Part3/preambles/preamble_detector.cpp
 response: Preamble detected within 3 subframe periods, synchronization maintained
 responseMeasure: Detection rate > 99% within 3 subframes, false positive rate < 0.1%
 relatedRequirements:
-  - StR-PERF-001
-  - StR-QUAL-001
-  - StR-FUNC-003
+  - REQ-PERF-AUDIO-001
+  - REQ-QUAL-HAL-001
+  - REQ-FUNC-TRANS-003
 relatedADRs:
   - ADR-003
   - ADR-001
@@ -147,9 +154,9 @@ artifact: Part4/balanced/balanced_transmitter (HAL implementation)
 response: Transmitter maintains intrinsic jitter within specification
 responseMeasure: Measured jitter < 0.025 UI (130 ns @ 96 kHz) over entire 1-hour period
 relatedRequirements:
-  - StR-PERF-001
-  - StR-QUAL-001
-  - StR-FUNC-004
+  - REQ-PERF-AUDIO-001
+  - REQ-QUAL-HAL-001
+  - REQ-FUNC-HAL-007
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -171,9 +178,9 @@ artifact: Part4/jitter/clock_generator (HAL implementation)
 response: UI timing accuracy maintained within specification
 responseMeasure: Timing error < 10 ppm across 0-40°C, drift < 20 ppm
 relatedRequirements:
-  - StR-PERF-001
-  - StR-QUAL-001
-  - StR-FUNC-004
+  - REQ-PERF-AUDIO-001
+  - REQ-QUAL-HAL-001
+  - REQ-FUNC-HAL-007
 relatedADRs:
   - ADR-001
   - ADR-002
@@ -197,8 +204,8 @@ artifact: Part2/channel_status/crcc_validator.cpp + Part3/frame/frame_assembler.
 response: Continue audio streaming with default channel status, log error, attempt resynchronization
 responseMeasure: Audio dropouts < 1 per hour, MTBF > 10,000 hours, recovery time < 100 ms
 relatedRequirements:
-  - REQ-QUAL-NF-002
-  - REQ-FUNC-F-003
+  - REQ-QUAL-META-001
+  - REQ-FUNC-TRANS-004
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -220,8 +227,8 @@ artifact: Part3/biphase_mark/biphase_decoder.cpp + Part4/HAL receiver clock reco
 response: Continuous clock adjustment, maintain lock, no audio interruption
 responseMeasure: Uptime > 99.9% (< 8.6 hours downtime/year), automatic drift compensation
 relatedRequirements:
-  - REQ-PERF-NF-003
-  - REQ-QUAL-NF-001
+  - REQ-PERF-TRANS-003
+  - REQ-QUAL-TRANS-001
 relatedADRs:
   - ADR-001
   - ADR-002
@@ -243,8 +250,8 @@ artifact: Common/interfaces/audio_interface.hpp + Standards layer isolation boun
 response: Standards layer continues operation, buffers audio, attempts HAL recovery
 responseMeasure: Standards layer crash rate < 0.01% of HAL crashes, recovery attempts > 3
 relatedRequirements:
-  - REQ-FUNC-F-001
-  - REQ-QUAL-NF-003
+  - REQ-FUNC-AUDIO-001
+  - REQ-QUAL-HAL-003
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -268,8 +275,8 @@ artifact: Part3/preambles/preamble_detector.cpp + Part3/biphase_mark/biphase_dec
 response: Reject invalid data, maintain buffer integrity, no memory corruption
 responseMeasure: Zero buffer overflows, zero crashes, 100% invalid data rejected
 relatedRequirements:
-  - REQ-QUAL-NF-003
-  - REQ-FUNC-F-001
+  - REQ-QUAL-HAL-003
+  - REQ-FUNC-AUDIO-001
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -291,8 +298,8 @@ artifact: All Standards layer components under maximum load
 response: Maintain operation within resource limits, no memory leaks, no starvation
 responseMeasure: CPU < 80%, memory < 16 KB, no resource exhaustion after 72 hours
 relatedRequirements:
-  - REQ-PERF-NF-001
-  - REQ-QUAL-NF-002
+  - REQ-PERF-AUDIO-001
+  - REQ-QUAL-META-001
 relatedADRs:
   - ADR-001
   - ADR-002
@@ -315,8 +322,8 @@ artifact: Part2/user_data/user_data_channel.cpp
 response: Validate user data length, sanitize before application layer, no code execution
 responseMeasure: Zero code injection vulnerabilities, 100% input validation, safe memory handling
 relatedRequirements:
-  - REQ-QUAL-NF-003
-  - REQ-FUNC-F-002
+  - REQ-QUAL-HAL-003
+  - REQ-FUNC-META-001
 relatedADRs:
   - ADR-001
 relatedViews:
@@ -339,8 +346,8 @@ artifact: Part4/HAL + Part3/frame/frame_assembler.cpp
 response: Signal loss detected, Standards layer notified, mute output, attempt recovery
 responseMeasure: Detection < 2 ms, no crash/corruption, auto-recovery on signal return < 10 ms
 relatedRequirements:
-  - StR-FUNC-004
-  - StR-PERF-003
+  - REQ-FUNC-HAL-007
+  - REQ-PERF-TRANS-003
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -362,8 +369,8 @@ artifact: Part2/channel_status/crcc_validator.cpp
 response: CRCC validation detects error, invalid block rejected, previous valid block retained
 responseMeasure: Detection rate > 99.9%, no invalid data propagated to application
 relatedRequirements:
-  - StR-FUNC-002
-  - StR-QUAL-001
+  - REQ-FUNC-META-006
+  - REQ-QUAL-HAL-001
 relatedADRs:
   - ADR-003
 relatedViews:
@@ -384,8 +391,8 @@ artifact: Entire Standards Layer (all Parts)
 response: No memory leaks, no buffer overflows, stable operation
 responseMeasure: RAM usage ≤ 16 KB throughout, no memory allocation in real-time path
 relatedRequirements:
-  - StR-PERF-002
-  - StR-PERF-003
+  - REQ-PERF-TRANS-001
+  - REQ-PERF-TRANS-003
 relatedADRs:
   - ADR-002
   - ADR-001
@@ -409,9 +416,9 @@ artifact: lib/Standards/AES/AES3/2009/ (all Parts)
 response: Standards layer compiles without modification, HAL interface ported
 responseMeasure: Zero modifications to Standards layer, < 10 HAL functions to implement
 relatedRequirements:
-  - StR-QUAL-003
-  - StR-FUNC-004
-  - StR-BUS-002
+  - REQ-QUAL-HAL-002
+  - REQ-FUNC-HAL-007
+  - REQ-FUNC-HAL-001
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -433,8 +440,8 @@ artifact: lib/Standards/ (C++17 Standards implementation)
 response: Successful compilation with IAR, all tests pass
 responseMeasure: Zero code changes required (C++17 standard compliance), test pass rate 100%
 relatedRequirements:
-  - StR-QUAL-003
-  - StR-QUAL-001
+  - REQ-QUAL-HAL-002
+  - REQ-QUAL-HAL-001
 relatedADRs:
   - ADR-002
   - ADR-001
@@ -458,8 +465,8 @@ artifact: Part2/channel_status/ components
 response: Changes isolated to Part2 namespace, zero HAL interface modifications
 responseMeasure: HAL function count remains ≤ 10, no platform re-integration required
 relatedRequirements:
-  - StR-FUNC-004
-  - StR-BUS-002
+  - REQ-FUNC-HAL-007
+  - REQ-FUNC-HAL-001
 relatedADRs:
   - ADR-001
   - ADR-003
@@ -481,8 +488,8 @@ artifact: Part1/audio_coding/pcm_encoder.cpp + test_pcm_encoder.cpp
 response: All modified functions have requirement links (@verifies tags), tests updated
 responseMeasure: 100% requirement traceability maintained, test coverage ≥ 95%
 relatedRequirements:
-  - StR-QUAL-002
-  - StR-FUNC-001
+  - REQ-QUAL-META-001
+  - REQ-FUNC-AUDIO-001
 relatedADRs:
   - ADR-003
 relatedViews:
