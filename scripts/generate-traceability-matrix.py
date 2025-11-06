@@ -30,8 +30,10 @@ REPORTS.mkdir(exist_ok=True)
 PATTERNS = {
     # Support optional 4-char category: StR-ABCD-001 or StR-001
     'stakeholder': re.compile(r'StR-(?:[A-Z]{4}-)?(?:[A-Z]+-)??\d{3}'),
-    # REQ-AUTH-F-001 or REQ-F-001, REQ-AUTH-NF-001 or REQ-NF-001
-    'requirement': re.compile(r'REQ-(?:[A-Z]{4}-)?(?:F|NF)-(?:[A-Z]+-)??\d{3}'),
+    # REQ patterns - support both strict and flexible formats:
+    # Strict: REQ-AUTH-F-001, REQ-F-001, REQ-AUTH-NF-001, REQ-NF-001
+    # Flexible: REQ-FUNC-AUDIO-001, REQ-SEC-001, REQ-PERF-TIMING-001
+    'requirement': re.compile(r'REQ-(?:[A-Z]{4}-)?(?:(?:F|NF)-(?:[A-Z]+-)?|(?:[A-Z]+-)+)\d{3}'),
     # ADR-AUTH-001 or ADR-001
     'adr': re.compile(r'ADR-(?:[A-Z]{4}-)??\d{3}'),
     # ARC-C-CORE-001 or ARC-C-001
@@ -43,11 +45,29 @@ PATTERNS = {
 }
 
 def is_guidance(path: pathlib.Path, text: str) -> bool:
-    if any(seg in path.as_posix() for seg in ['.github/prompts']):
+    """Check if a file should be excluded from traceability scanning.
+    
+    Excludes:
+    - Template files in spec-kit-templates/
+    - Prompt files in .github/prompts/
+    - Instruction files in .github/instructions/
+    - Copilot instruction files
+    - Files with specType: guidance in front matter
+    """
+    # Exclude template and guidance directories
+    excluded_paths = [
+        '.github/prompts',
+        '.github/instructions', 
+        'spec-kit-templates',
+        'docs/'  # Documentation and guides
+    ]
+    if any(seg in path.as_posix() for seg in excluded_paths):
         return True
     if 'copilot-instructions.md' in path.name.lower():
         return True
     if 'ADR-template.md' in path.name:
+        return True
+    if 'template' in path.name.lower():
         return True
     # front matter specType: guidance
     if text.startswith('---'):
