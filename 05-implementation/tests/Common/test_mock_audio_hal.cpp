@@ -94,7 +94,7 @@ TEST_F(MockAudioHALTest, Cleanup_AfterInit_Success) {
     
     mock_hal_statistics_t stats;
     mock_audio_hal_get_statistics(&stats);
-    EXPECT_EQ(stats.total_cleanup_calls, 1);
+    EXPECT_EQ(stats.total_cleanup_calls, 1U);
 }
 
 // =============================================================================
@@ -128,7 +128,7 @@ TEST_F(MockAudioHALTest, SendFrames_ValidData_Success) {
     
     mock_hal_statistics_t stats;
     mock_audio_hal_get_statistics(&stats);
-    EXPECT_EQ(stats.total_frames_sent, 256);
+    EXPECT_EQ(stats.total_frames_sent, 256U);
 }
 
 /**
@@ -169,7 +169,7 @@ TEST_F(MockAudioHALTest, ReceiveFrames_ValidBuffer_Success) {
     
     mock_hal_statistics_t stats;
     mock_audio_hal_get_statistics(&stats);
-    EXPECT_EQ(stats.total_frames_received, 256);
+    EXPECT_EQ(stats.total_frames_received, 256U);
 }
 
 /**
@@ -224,7 +224,7 @@ TEST_F(MockAudioHALTest, FrameCapture_SendFrames_StoresFrames) {
     hal_interface->send_frames(frames, 3);
     
     // Assert
-    EXPECT_EQ(mock_audio_hal_get_captured_frame_count(), 3);
+    EXPECT_EQ(mock_audio_hal_get_captured_frame_count(), 3U);
     
     int32_t captured_frame[2];
     EXPECT_TRUE(mock_audio_hal_get_captured_frame(0, captured_frame));
@@ -258,10 +258,10 @@ TEST_F(MockAudioHALTest, FrameCapture_MaxFrames_LimitsCapture) {
     int32_t frames[6] = {1000, 2000, 3000, 4000, 5000, 6000};  // 3 frames
     
     // Act
-    hal_interface->send_frames(frames, 3);
+    hal_interface->send_frames(frames, 5);
     
     // Assert
-    EXPECT_EQ(mock_audio_hal_get_captured_frame_count(), 2);  // Only 2 captured
+    EXPECT_EQ(mock_audio_hal_get_captured_frame_count(), 2U);  // Only 2 captured
 }
 
 // =============================================================================
@@ -486,7 +486,7 @@ TEST_F(MockAudioHALTest, ErrorInjection_BufferOverflow_AfterNSends) {
     
     audio_hal_status_info_t status;
     hal_interface->get_status(&status);
-    EXPECT_EQ(status.buffer_overflows, 1);
+    EXPECT_EQ(status.buffer_overflows, 1U);
 }
 
 // =============================================================================
@@ -577,7 +577,7 @@ TEST_F(MockAudioHALTest, CallLogging_RecordsAllCalls) {
     
     // Assert
     size_t call_count = mock_audio_hal_get_call_count();
-    EXPECT_GE(call_count, 4);  // At least init, start, send, stop
+    EXPECT_GE(call_count, 4U);  // At least init, start, send, stop
     
     mock_call_log_entry_t entry;
     
