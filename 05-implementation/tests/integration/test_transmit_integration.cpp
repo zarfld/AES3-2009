@@ -83,8 +83,8 @@ protected:
         sf_config.biphase_coding = false;
         subframe_builder = std::make_unique<SubframeBuilder>(sf_config);
         
-        // Initialize Mock HAL
-        mock_hal = std::make_unique<MockAudioHAL>();
+        // Initialize Mock HAL wrapper
+        mock_hal = std::make_unique<MockHALWrapper>();
         mock_hal->reset();
     }
     
@@ -143,7 +143,7 @@ protected:
     
     std::unique_ptr<PCMEncoder> pcm_encoder;
     std::unique_ptr<SubframeBuilder> subframe_builder;
-    std::unique_ptr<MockAudioHAL> mock_hal;
+    std::unique_ptr<MockHALWrapper> mock_hal;
     PCMEncoder::Config pcm_config;
 };
 
