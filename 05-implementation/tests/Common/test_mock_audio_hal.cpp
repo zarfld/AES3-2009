@@ -12,6 +12,16 @@
  * - Timing simulation
  * - Status reporting
  * 
+ * Requirements Coverage (HAL Abstraction):
+ * - REQ-FUNC-HAL-001: HAL Initialization and Configuration
+ * - REQ-FUNC-HAL-002: Transmit Audio Frames
+ * - REQ-FUNC-HAL-003: Receive Audio Frames
+ * - REQ-FUNC-HAL-004: Start/Stop Audio Streaming
+ * - REQ-FUNC-HAL-005: Query HAL Capabilities
+ * - REQ-FUNC-HAL-006: Error Handling and Status Reporting
+ * - REQ-FUNC-HAL-007: Sample Clock Synchronization
+ * - REQ-PERF-HAL-004: HAL Function Call Latency
+ * 
  * @copyright Copyright (c) 2024
  */
 
@@ -44,6 +54,7 @@ protected:
 
 /**
  * @test TEST-MOCK-001: Mock HAL initialization succeeds with valid config
+ * @verifies REQ-FUNC-HAL-001 (HAL Initialization and Configuration)
  */
 TEST_F(MockAudioHALTest, Init_ValidConfig_Success) {
     // Arrange
@@ -64,6 +75,7 @@ TEST_F(MockAudioHALTest, Init_ValidConfig_Success) {
 
 /**
  * @test TEST-MOCK-002: Mock HAL init fails with NULL config
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - invalid parameters)
  */
 TEST_F(MockAudioHALTest, Init_NullConfig_Failure) {
     // Act
@@ -75,6 +87,7 @@ TEST_F(MockAudioHALTest, Init_NullConfig_Failure) {
 
 /**
  * @test TEST-MOCK-003: Mock HAL cleanup succeeds after init
+ * @verifies REQ-FUNC-HAL-001 (HAL Initialization - cleanup)
  */
 TEST_F(MockAudioHALTest, Cleanup_AfterInit_Success) {
     // Arrange
@@ -103,6 +116,7 @@ TEST_F(MockAudioHALTest, Cleanup_AfterInit_Success) {
 
 /**
  * @test TEST-MOCK-004: Send frames succeeds with valid data
+ * @verifies REQ-FUNC-HAL-002 (Transmit Audio Frames)
  */
 TEST_F(MockAudioHALTest, SendFrames_ValidData_Success) {
     // Arrange
@@ -133,6 +147,7 @@ TEST_F(MockAudioHALTest, SendFrames_ValidData_Success) {
 
 /**
  * @test TEST-MOCK-005: Send frames fails when not initialized
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - not initialized)
  */
 TEST_F(MockAudioHALTest, SendFrames_NotInitialized_Failure) {
     // Arrange
@@ -147,6 +162,7 @@ TEST_F(MockAudioHALTest, SendFrames_NotInitialized_Failure) {
 
 /**
  * @test TEST-MOCK-006: Receive frames succeeds with valid buffer
+ * @verifies REQ-FUNC-HAL-003 (Receive Audio Frames)
  */
 TEST_F(MockAudioHALTest, ReceiveFrames_ValidBuffer_Success) {
     // Arrange
@@ -174,6 +190,7 @@ TEST_F(MockAudioHALTest, ReceiveFrames_ValidBuffer_Success) {
 
 /**
  * @test TEST-MOCK-007: Receive frames returns silence when no playback buffer loaded
+ * @verifies REQ-FUNC-HAL-003 (Receive Audio Frames - silence handling)
  */
 TEST_F(MockAudioHALTest, ReceiveFrames_NoPlaybackBuffer_ReturnsSilence) {
     // Arrange
@@ -205,6 +222,7 @@ TEST_F(MockAudioHALTest, ReceiveFrames_NoPlaybackBuffer_ReturnsSilence) {
 
 /**
  * @test TEST-MOCK-008: Frame capture stores sent frames
+ * @verifies REQ-FUNC-HAL-002 (Transmit Audio Frames - capture)
  */
 TEST_F(MockAudioHALTest, FrameCapture_SendFrames_StoresFrames) {
     // Arrange
@@ -242,6 +260,7 @@ TEST_F(MockAudioHALTest, FrameCapture_SendFrames_StoresFrames) {
 
 /**
  * @test TEST-MOCK-009: Frame capture respects max frame limit
+ * @verifies REQ-FUNC-HAL-002 (Transmit Audio Frames - buffer management)
  */
 TEST_F(MockAudioHALTest, FrameCapture_MaxFrames_LimitsCapture) {
     // Arrange
@@ -270,6 +289,7 @@ TEST_F(MockAudioHALTest, FrameCapture_MaxFrames_LimitsCapture) {
 
 /**
  * @test TEST-MOCK-010: Load receive frames provides data for receive_frames calls
+ * @verifies REQ-FUNC-HAL-003 (Receive Audio Frames - playback buffer)
  */
 TEST_F(MockAudioHALTest, LoadReceiveFrames_ValidData_ProvidesFrames) {
     // Arrange
@@ -299,6 +319,7 @@ TEST_F(MockAudioHALTest, LoadReceiveFrames_ValidData_ProvidesFrames) {
 
 /**
  * @test TEST-MOCK-011: Receive frames exhausts playback buffer and returns silence
+ * @verifies REQ-FUNC-HAL-003 (Receive Audio Frames - buffer exhaustion)
  */
 TEST_F(MockAudioHALTest, ReceiveFrames_ExhaustsBuffer_ReturnsSilence) {
     // Arrange
@@ -334,6 +355,7 @@ TEST_F(MockAudioHALTest, ReceiveFrames_ExhaustsBuffer_ReturnsSilence) {
 
 /**
  * @test TEST-MOCK-012: Start succeeds when initialized
+ * @verifies REQ-FUNC-HAL-004 (Start/Stop Audio Streaming - start)
  */
 TEST_F(MockAudioHALTest, Start_AfterInit_Success) {
     // Arrange
@@ -358,6 +380,7 @@ TEST_F(MockAudioHALTest, Start_AfterInit_Success) {
 
 /**
  * @test TEST-MOCK-013: Start fails when already running
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - already running)
  */
 TEST_F(MockAudioHALTest, Start_AlreadyRunning_Failure) {
     // Arrange
@@ -379,6 +402,7 @@ TEST_F(MockAudioHALTest, Start_AlreadyRunning_Failure) {
 
 /**
  * @test TEST-MOCK-014: Stop succeeds when running
+ * @verifies REQ-FUNC-HAL-004 (Start/Stop Audio Streaming - stop)
  */
 TEST_F(MockAudioHALTest, Stop_WhenRunning_Success) {
     // Arrange
@@ -408,6 +432,7 @@ TEST_F(MockAudioHALTest, Stop_WhenRunning_Success) {
 
 /**
  * @test TEST-MOCK-015: Error injection causes init to fail
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - error injection)
  */
 TEST_F(MockAudioHALTest, ErrorInjection_Init_Fails) {
     // Arrange
@@ -438,6 +463,7 @@ TEST_F(MockAudioHALTest, ErrorInjection_Init_Fails) {
 
 /**
  * @test TEST-MOCK-016: Error injection causes send_frames to fail
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - send failure)
  */
 TEST_F(MockAudioHALTest, ErrorInjection_SendFrames_Fails) {
     // Arrange
@@ -471,6 +497,7 @@ TEST_F(MockAudioHALTest, ErrorInjection_SendFrames_Fails) {
 
 /**
  * @test TEST-MOCK-017: Error injection causes buffer overflow after N sends
+ * @verifies REQ-FUNC-HAL-006 (Error Handling - buffer overflow)
  */
 TEST_F(MockAudioHALTest, ErrorInjection_BufferOverflow_AfterNSends) {
     // Arrange
@@ -516,6 +543,7 @@ TEST_F(MockAudioHALTest, ErrorInjection_BufferOverflow_AfterNSends) {
 
 /**
  * @test TEST-MOCK-018: Clock advances on send_frames
+ * @verifies REQ-FUNC-HAL-007 (Sample Clock Synchronization)
  */
 TEST_F(MockAudioHALTest, Timing_SendFrames_AdvancesClock) {
     // Arrange
@@ -549,6 +577,7 @@ TEST_F(MockAudioHALTest, Timing_SendFrames_AdvancesClock) {
 
 /**
  * @test TEST-MOCK-019: Manual clock advance works
+ * @verifies REQ-FUNC-HAL-007 (Sample Clock Synchronization - manual advance)
  */
 TEST_F(MockAudioHALTest, Timing_ManualAdvance_UpdatesClock) {
     // Arrange
@@ -578,6 +607,8 @@ TEST_F(MockAudioHALTest, Timing_ManualAdvance_UpdatesClock) {
 
 /**
  * @test TEST-MOCK-020: Call logging records all HAL calls
+ * @verifies REQ-FUNC-HAL-005 (Query HAL Capabilities - call logging)
+ * @verifies REQ-PERF-HAL-004 (HAL Function Call Latency - performance tracking)
  */
 TEST_F(MockAudioHALTest, CallLogging_RecordsAllCalls) {
     // Arrange & Act

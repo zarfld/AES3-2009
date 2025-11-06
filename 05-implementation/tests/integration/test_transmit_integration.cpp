@@ -13,6 +13,15 @@
  * - Error handling and edge cases
  * - Stereo frame assembly
  * 
+ * Requirements Coverage (Integration):
+ * - REQ-FUNC-AUDIO-001: Linear PCM Encoding (end-to-end)
+ * - REQ-FUNC-AUDIO-002: PCM Polarity Convention (end-to-end)
+ * - REQ-FUNC-AUDIO-003: Coding Precision Options (end-to-end)
+ * - REQ-FUNC-TRANS-002: Time Slot Allocation (end-to-end)
+ * - REQ-FUNC-TRANS-003: Preamble X, Y, Z Patterns (end-to-end)
+ * - REQ-PERF-AUDIO-001: Real-Time PCM Encoding Performance
+ * - REQ-PERF-TRANS-001: Real-Time Biphase-Mark Encoding Performance
+ * 
  * @standard AES3-2009 Parts 1-3 (Audio Content, Metadata, Transport)
  * @copyright Copyright (c) 2025
  */
@@ -155,6 +164,9 @@ protected:
 
 /**
  * @test TEST-INT-001: Single sample transmit chain
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - end-to-end)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - end-to-end)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X pattern - integration)
  * @traceability DES-C-001, DES-C-003, DES-C-004
  */
 TEST_F(TransmitIntegrationTest, SingleSample_CompleteChain_Success) {
@@ -179,6 +191,9 @@ TEST_F(TransmitIntegrationTest, SingleSample_CompleteChain_Success) {
 
 /**
  * @test TEST-INT-002: Stereo pair transmit chain
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - stereo)
+ * @verifies REQ-FUNC-TRANS-003 (Preamble X, Y patterns - stereo pairing)
+ * @verifies REQ-FUNC-TRANS-005 (Frame Structure - stereo frame integration)
  * @traceability DES-C-001, DES-C-003, DES-C-004
  */
 TEST_F(TransmitIntegrationTest, StereoPair_CompleteChain_Success) {
@@ -207,6 +222,9 @@ TEST_F(TransmitIntegrationTest, StereoPair_CompleteChain_Success) {
 
 /**
  * @test TEST-INT-003: Maximum positive sample transmit
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - maximum positive value)
+ * @verifies REQ-FUNC-AUDIO-002 (PCM Polarity Convention - positive maximum)
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision - 24-bit maximum)
  * @traceability DES-C-003, AES3-2009 Part 1 Section 5
  */
 TEST_F(TransmitIntegrationTest, MaxPositiveSample_24Bit_Success) {
@@ -238,6 +256,8 @@ TEST_F(TransmitIntegrationTest, MaxPositiveSample_24Bit_Success) {
 
 /**
  * @test TEST-INT-004: Maximum negative sample transmit
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - maximum negative value)
+ * @verifies REQ-FUNC-AUDIO-002 (PCM Polarity Convention - negative maximum)
  * @traceability DES-C-003, AES3-2009 Part 1 Section 5
  */
 TEST_F(TransmitIntegrationTest, MaxNegativeSample_24Bit_Success) {
@@ -254,6 +274,7 @@ TEST_F(TransmitIntegrationTest, MaxNegativeSample_24Bit_Success) {
 
 /**
  * @test TEST-INT-005: Zero sample transmit
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - zero value)
  * @traceability DES-C-003
  */
 TEST_F(TransmitIntegrationTest, ZeroSample_Success) {
@@ -281,6 +302,8 @@ TEST_F(TransmitIntegrationTest, ZeroSample_Success) {
 
 /**
  * @test TEST-INT-006: Validity bit propagation
+ * @verifies REQ-FUNC-AUDIO-009 (Validity Bit Implementation - end-to-end)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - validity bit propagation)
  * @traceability DES-C-004, AES3-2009 Part 3 Section 4.1
  */
 TEST_F(TransmitIntegrationTest, ValidityBit_Unreliable_Propagated) {
@@ -303,6 +326,8 @@ TEST_F(TransmitIntegrationTest, ValidityBit_Unreliable_Propagated) {
 
 /**
  * @test TEST-INT-007: Channel status bit propagation
+ * @verifies REQ-FUNC-META-001 (Channel Status Byte 0 - bit propagation)
+ * @verifies REQ-FUNC-TRANS-002 (Time Slot Allocation - channel status bit)
  * @traceability DES-C-004, AES3-2009 Part 2
  */
 TEST_F(TransmitIntegrationTest, ChannelStatusBit_Propagated) {
@@ -329,6 +354,8 @@ TEST_F(TransmitIntegrationTest, ChannelStatusBit_Propagated) {
 
 /**
  * @test TEST-INT-008: Transmit path performance (<10µs per sample)
+ * @verifies REQ-PERF-AUDIO-001 (Real-Time PCM Encoding Performance)
+ * @verifies REQ-PERF-TRANS-001 (Real-Time Biphase-Mark Encoding Performance)
  * @traceability Performance requirements
  */
 TEST_F(TransmitIntegrationTest, Performance_SingleSample_Under10Microseconds) {
@@ -358,6 +385,8 @@ TEST_F(TransmitIntegrationTest, Performance_SingleSample_Under10Microseconds) {
 
 /**
  * @test TEST-INT-009: Stereo frame performance
+ * @verifies REQ-PERF-AUDIO-001 (Real-Time PCM Encoding - stereo)
+ * @verifies REQ-PERF-TRANS-001 (Real-Time Encoding - stereo frame)
  * @traceability Performance requirements
  */
 TEST_F(TransmitIntegrationTest, Performance_StereoFrame_Under20Microseconds) {
@@ -391,6 +420,9 @@ TEST_F(TransmitIntegrationTest, Performance_StereoFrame_Under20Microseconds) {
 
 /**
  * @test TEST-INT-010: Sequence of samples maintains data integrity
+ * @verifies REQ-FUNC-AUDIO-001 (Linear PCM Encoding - data integrity)
+ * @verifies REQ-FUNC-TRANS-009 (Even Parity - error detection)
+ * @verifies REQ-FUNC-TRANS-006 (Block Structure - frame sequence integrity)
  * @traceability DES-C-001 through DES-C-004
  */
 TEST_F(TransmitIntegrationTest, SampleSequence_DataIntegrity_Maintained) {
