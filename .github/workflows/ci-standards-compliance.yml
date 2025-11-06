@@ -206,22 +206,35 @@ jobs:
         with:
           name: spec-generated-artifacts
           path: build
+      - name: Verify traceability.json exists
+        run: |
+          if [ ! -f "build/traceability.json" ]; then
+            echo "❌ FAILURE: traceability.json does not exist"
+            echo ""
+            echo "This means the spec-generation job failed to create traceability data."
+            echo "Root causes:"
+            echo "  1. No specification files exist in 01-stakeholder-requirements/ or 02-requirements/"
+            echo "  2. Specification files don't follow the required format"
+            echo "  3. The build_trace_json.py script failed"
+            echo ""
+            echo "ACTION REQUIRED:"
+            echo "  - Create proper specification files following the templates in spec-kit-templates/"
+            echo "  - Ensure specs have correct YAML front matter with traceability IDs"
+            echo "  - Run 'python scripts/generators/build_trace_json.py' locally to test"
+            echo ""
+            ls -la build/ || echo "build/ directory doesn't exist"
+            exit 1
+          fi
+          echo "✅ traceability.json exists"
       - name: Enforce requirement linkage coverage
-        continue-on-error: true
         run: |
           echo "📊 Checking traceability coverage..."
-          echo "NOTE: This check validates that every requirement has proper traceability:"
+          echo "Validating that requirements have proper linkage:"
           echo "  - Requirements → Architecture/Design"
           echo "  - Design → Implementation (code)"
           echo "  - Implementation → Tests"
           echo ""
           ALLOW_EMPTY_SPECS=1 python scripts/validate-trace-coverage.py --min-req ${{ env.MIN_REQ_LINKAGE_COVERAGE }}
-      - name: Report traceability status
-        if: always()
-        run: |
-          echo "⚠️ Traceability coverage check is currently advisory (non-blocking)"
-          echo "This should be enforced once proper traceability links are established"
-          echo "Do NOT add fake IDs just to pass - establish real traceability!"
 
   integrity-scan:
     name: Integrity Level Scan
