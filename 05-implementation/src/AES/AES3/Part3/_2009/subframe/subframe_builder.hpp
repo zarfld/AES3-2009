@@ -35,23 +35,6 @@ namespace subframe {
 // Enumerations and Constants
 // =============================================================================
 
-/**
- * @brief Preamble patterns per AES3-2009 Part 3, Section 4.2.1
- * 
- * Preambles violate biphase-mark coding rules for synchronization.
- * Each preamble occupies 4 time slots (8 bits).
- */
-enum class Preamble : uint8_t {
-    X = 0,  ///< Channel A, block start (LSB first: 11100010)
-    Y = 1,  ///< Channel B, block start (LSB first: 11100100)
-    Z = 2   ///< Channel A, mid-block   (LSB first: 11101000)
-};
-
-// Preamble bit patterns (LSB first per AES3-2009)
-constexpr uint8_t PREAMBLE_X_PATTERN = 0xE2;  // 11100010
-constexpr uint8_t PREAMBLE_Y_PATTERN = 0xE4;  // 11100100
-constexpr uint8_t PREAMBLE_Z_PATTERN = 0xE8;  // 11101000
-
 // =============================================================================
 // Subframe Builder Class
 // =============================================================================
@@ -69,6 +52,23 @@ constexpr uint8_t PREAMBLE_Z_PATTERN = 0xE8;  // 11101000
 class SubframeBuilder {
 public:
     using WordLength = AES::AES3::Part1::_2009::audio_coding::WordLength;
+    
+    /**
+     * @brief Preamble patterns per AES3-2009 Part 3, Section 4.2.1
+     * 
+     * Preambles violate biphase-mark coding rules for synchronization.
+     * Each preamble occupies 4 time slots (8 bits).
+     */
+    enum class Preamble : uint8_t {
+        X = 0,  ///< Channel A, block start (LSB first: 11100010)
+        Y = 1,  ///< Channel B, block start (LSB first: 11100100)
+        Z = 2   ///< Channel A, mid-block   (LSB first: 11101000)
+    };
+    
+    // Preamble bit patterns (LSB first per AES3-2009)
+    static constexpr uint8_t PREAMBLE_X_PATTERN = 0xE2;  // 11100010
+    static constexpr uint8_t PREAMBLE_Y_PATTERN = 0xE4;  // 11100100
+    static constexpr uint8_t PREAMBLE_Z_PATTERN = 0xE8;  // 11101000
     
     // =============================================================================
     // Configuration Structure
@@ -121,7 +121,7 @@ public:
      * @performance <5µs (typical: ~2µs)
      * @standard AES3-2009 Part 3, Section 4
      */
-    int build_subframe(uint32_t audio_sample,
+    inline int build_subframe(uint32_t audio_sample,
                        uint8_t validity,
                        uint8_t user_bit,
                        uint8_t channel_bit,
@@ -134,29 +134,28 @@ public:
         insert_preamble(preamble, subframe);
         
         // Insert audio data (time slots 4-27, 24 bits)
-        // Extract 24-bit audio from 32-bit input
+        // Each audio bit occupies one time slot, stored in both bit positions
         for (int bit = 0; bit < 24; ++bit) {
-            uint8_t bit_value = (audio_sample >> (23 - bit)) & 0x01;
-            subframe.set_bit(SubframeData::AUDIO_START * 2 + bit, bit_value);
+            uint8_t audio_bit = (audio_sample >> (23 - bit)) & 0x01;
+            // Store audio bit in both positions of the time slot
+            uint8_t slot_value = audio_bit | (audio_bit << 1);
+            subframe.set_bit(SubframeData::AUDIO_START + bit, slot_value);
         }
         
-        // Insert validity bit (time slot 28)
-        subframe.set_bit(SubframeData::VALIDITY_SLOT * 2, validity & 0x01);
-        subframe.set_bit(SubframeData::VALIDITY_SLOT * 2 + 1, (validity >> 1) & 0x01);
+        // Insert validity bit (time slot 28) - store single bit in both positions
+        subframe.set_bit(SubframeData::VALIDITY_SLOT, (validity & 0x01) | ((validity & 0x01) << 1));
         
-        // Insert user data bit (time slot 29)
-        subframe.set_bit(SubframeData::USER_SLOT * 2, user_bit & 0x01);
-        subframe.set_bit(SubframeData::USER_SLOT * 2 + 1, (user_bit >> 1) & 0x01);
+        // Insert user data bit (time slot 29) - store single bit in both positions
+        subframe.set_bit(SubframeData::USER_SLOT, (user_bit & 0x01) | ((user_bit & 0x01) << 1));
         
-        // Insert channel status bit (time slot 30)
-        subframe.set_bit(SubframeData::CHANNEL_STATUS_SLOT * 2, channel_bit & 0x01);
-        subframe.set_bit(SubframeData::CHANNEL_STATUS_SLOT * 2 + 1, (channel_bit >> 1) & 0x01);
+        // Insert channel status bit (time slot 30) - store single bit in both positions
+        subframe.set_bit(SubframeData::CHANNEL_STATUS_SLOT, (channel_bit & 0x01) | ((channel_bit & 0x01) << 1));
         
         // Calculate and insert parity bit (time slot 31)
         if (config_.auto_parity) {
             uint8_t parity = calculate_parity(subframe);
-            subframe.set_bit(SubframeData::PARITY_SLOT * 2, parity & 0x01);
-            subframe.set_bit(SubframeData::PARITY_SLOT * 2 + 1, (parity >> 1) & 0x01);
+            // Store single parity bit in both bit positions of slot 31
+            subframe.set_bit(SubframeData::PARITY_SLOT, parity | (parity << 1));
         }
         
         return 0;
@@ -166,24 +165,22 @@ public:
      * @brief Calculate even parity over time slots 4-30
      * 
      * @param subframe Subframe data
-     * @return Parity value for time slot 31
+     * @return Parity value for time slot 31 (single bit: 0 or 1)
      * 
      * @performance <500ns
      * @standard AES3-2009 Part 3, Section 4.2.3
      */
-    static uint8_t calculate_parity(const SubframeData& subframe) noexcept {
-        // Count ones in time slots 4-30 (48 bits)
+    static inline uint8_t calculate_parity(const SubframeData& subframe) noexcept {
+        // Count ones in time slots 4-30 (27 slots × 2 bits each = 54 bits)
         uint32_t ones = 0;
         for (int slot = SubframeData::AUDIO_START; slot <= SubframeData::CHANNEL_STATUS_SLOT; ++slot) {
-            uint8_t slot_value = subframe.get_slot(slot);
+            uint8_t slot_value = subframe.get_bit(slot);
+            // Count both bits in the 2-bit time slot
             ones += (slot_value & 0x01) + ((slot_value >> 1) & 0x01);
         }
         
         // Even parity: return 0 if even number of ones, 1 if odd
-        uint8_t parity_bit = ones & 0x01;
-        
-        // Return as 2-bit time slot value (both bits same for parity)
-        return parity_bit | (parity_bit << 1);
+        return ones & 0x01;
     }
     
     /**
@@ -195,7 +192,7 @@ public:
      * @performance <200ns
      * @standard AES3-2009 Part 3, Section 4.2.1
      */
-    static void insert_preamble(Preamble preamble, SubframeData& subframe) noexcept {
+    static inline void insert_preamble(Preamble preamble, SubframeData& subframe) noexcept {
         uint8_t pattern = 0;
         switch (preamble) {
             case Preamble::X:
@@ -209,10 +206,10 @@ public:
                 break;
         }
         
-        // Insert 8-bit preamble pattern into time slots 0-3 (8 bits total)
-        for (int bit = 0; bit < 8; ++bit) {
-            uint8_t bit_value = (pattern >> bit) & 0x01;
-            subframe.set_bit(bit, bit_value);
+        // Insert 8-bit preamble pattern into time slots 0-3 (2 bits per slot)
+        for (int slot = 0; slot < 4; ++slot) {
+            uint8_t bit_pair = (pattern >> (slot * 2)) & 0x03;
+            subframe.set_bit(slot, bit_pair);
         }
     }
     
@@ -233,7 +230,7 @@ public:
      * 
      * Clears any internal state. Currently no state to clear beyond config.
      */
-    void reset() noexcept {
+    inline void reset() noexcept {
         // Currently no internal state beyond config
         // This method is provided for future extensions
     }

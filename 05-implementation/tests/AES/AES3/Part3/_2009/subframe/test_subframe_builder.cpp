@@ -22,103 +22,11 @@
 
 #include <gtest/gtest.h>
 #include "AES/AES3/Part3/_2009/subframe/subframe_data.hpp"
+#include "AES/AES3/Part3/_2009/subframe/subframe_builder.hpp"
 #include "AES/AES3/Part1/_2009/audio_coding/pcm_encoder.hpp"
 
 using namespace AES::AES3::Part3::_2009::subframe;
 using namespace AES::AES3::Part1::_2009::audio_coding;
-
-// Forward declaration of SubframeBuilder class (to be implemented in GREEN phase)
-namespace AES {
-namespace AES3 {
-namespace Part3 {
-namespace _2009 {
-namespace subframe {
-
-/**
- * @brief AES3-2009 Subframe Builder
- * 
- * Assembles complete AES3-2009 subframes from audio samples.
- * Handles preamble insertion, audio encoding, and metadata bits.
- */
-class SubframeBuilder {
-public:
-    /**
-     * @brief Preamble patterns for subframe synchronization
-     * @standard AES3-2009 Part 3, Section 4.2.1
-     */
-    enum class Preamble : uint8_t {
-        X = 0,  ///< Subframe 1 (channel A) at block start
-        Y = 1,  ///< Subframe 2 (channel B) at block start  
-        Z = 2   ///< Subframe 1 (channel A) mid-block
-    };
-    
-    /**
-     * @brief Subframe builder configuration
-     */
-    struct Config {
-        WordLength word_length;
-        bool auto_parity;     ///< Automatically calculate parity bit
-        bool biphase_coding;  ///< Enable biphase-mark coding simulation
-    };
-    
-    /**
-     * @brief Construct subframe builder with configuration
-     */
-    explicit SubframeBuilder(const Config& config = Config{
-        WordLength::BITS_24,
-        true,
-        false
-    });
-    
-    /**
-     * @brief Build complete subframe from audio sample
-     * 
-     * @param[in] audio_sample  Encoded audio sample (24-bit PCM)
-     * @param[in] validity      Validity bit (0=valid, 1=unreliable)
-     * @param[in] user_bit      User data bit
-     * @param[in] channel_bit   Channel status bit
-     * @param[in] preamble      Preamble pattern (X/Y/Z)
-     * @param[out] subframe     Output subframe data
-     * @return 0 on success, negative error code on failure
-     */
-    int build_subframe(uint32_t audio_sample,
-                       uint8_t validity,
-                       uint8_t user_bit,
-                       uint8_t channel_bit,
-                       Preamble preamble,
-                       SubframeData& subframe);
-    
-    /**
-     * @brief Calculate even parity over time slots 4-30
-     */
-    static uint8_t calculate_parity(const SubframeData& subframe);
-    
-    /**
-     * @brief Insert preamble pattern into subframe
-     */
-    static void insert_preamble(Preamble preamble, SubframeData& subframe);
-    
-    /**
-     * @brief Get configuration
-     */
-    const Config& get_config() const { return config_; }
-    
-    /**
-     * @brief Reset builder state
-     */
-    void reset();
-    
-private:
-    Config config_;
-};
-
-} // namespace subframe
-} // namespace _2009
-} // namespace Part3
-} // namespace AES3
-} // namespace AES
-
-using SubframeBuilder = AES::AES3::Part3::_2009::subframe::SubframeBuilder;
 
 // =============================================================================
 // Test Fixture
@@ -353,7 +261,8 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_Zero_Valid) {
     
     // Assert
     // Validity bit in time slot 28 should be 0
-    uint8_t validity_bit = subframe.get_bit(SubframeData::VALIDITY_SLOT * 2);  // First bit of slot
+    uint8_t validity_slot = subframe.get_bit(SubframeData::VALIDITY_SLOT);
+    uint8_t validity_bit = validity_slot & 0x01;
     EXPECT_EQ(validity_bit, 0);
 }
 
@@ -370,8 +279,9 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ValidityBit_One_Unreliable) {
     builder.build_subframe(0x007FFFFF, 1, 0, 0, SubframeBuilder::Preamble::X, subframe);
     
     // Assert
-    // Validity bit in time slot 28 should be 1
-    uint8_t validity_bit = subframe.get_bit(SubframeData::VALIDITY_SLOT * 2);
+    // Validity bit in time slot 28 should be 1 (stored in both bit positions)
+    uint8_t validity_slot = subframe.get_bit(SubframeData::VALIDITY_SLOT);
+    uint8_t validity_bit = validity_slot & 0x01;
     EXPECT_EQ(validity_bit, 1);
 }
 
@@ -389,7 +299,8 @@ TEST_F(SubframeBuilderTest, BuildSubframe_UserBit_Set) {
     
     // Assert
     // User bit in time slot 29 should be 1
-    uint8_t user_bit = subframe.get_bit(SubframeData::USER_SLOT * 2);
+    uint8_t user_slot = subframe.get_bit(SubframeData::USER_SLOT);
+    uint8_t user_bit = user_slot & 0x01;
     EXPECT_EQ(user_bit, 1);
 }
 
@@ -407,7 +318,8 @@ TEST_F(SubframeBuilderTest, BuildSubframe_ChannelStatusBit_Set) {
     
     // Assert
     // Channel status bit in time slot 30 should be 1
-    uint8_t channel_bit = subframe.get_bit(SubframeData::CHANNEL_STATUS_SLOT * 2);
+    uint8_t channel_slot = subframe.get_bit(SubframeData::CHANNEL_STATUS_SLOT);
+    uint8_t channel_bit = channel_slot & 0x01;
     EXPECT_EQ(channel_bit, 1);
 }
 
@@ -430,15 +342,19 @@ TEST_F(SubframeBuilderTest, BuildSubframe_AutoParity_EvenParity) {
     // Assert
     // Calculate parity over slots 4-30 (audio, validity, user, channel status)
     uint8_t calculated_parity = SubframeBuilder::calculate_parity(subframe);
-    uint8_t stored_parity = subframe.get_bit(SubframeData::PARITY_SLOT * 2);
+    uint8_t stored_parity_slot = subframe.get_bit(SubframeData::PARITY_SLOT);
+    
+    // Parity should be single bit value, stored in both bits of slot
+    uint8_t stored_parity = stored_parity_slot & 0x01;
     
     EXPECT_EQ(stored_parity, calculated_parity);
     
     // Total number of 1-bits in slots 4-31 should be even
     uint8_t bit_count = 0;
     for (size_t slot = SubframeData::AUDIO_START; slot <= SubframeData::PARITY_SLOT; ++slot) {
-        if (subframe.get_bit(slot * 2)) bit_count++;
-        if (subframe.get_bit(slot * 2 + 1)) bit_count++;
+        uint8_t slot_value = subframe.get_bit(slot);
+        if (slot_value & 0x01) bit_count++;
+        if (slot_value & 0x02) bit_count++;
     }
     EXPECT_EQ(bit_count % 2, 0);  // Even parity
 }
@@ -450,10 +366,10 @@ TEST_F(SubframeBuilderTest, BuildSubframe_AutoParity_EvenParity) {
 TEST_F(SubframeBuilderTest, CalculateParity_ManualVerification) {
     // Arrange
     SubframeData subframe;
-    // Set specific bits for known parity
-    subframe.set_bit(SubframeData::AUDIO_START * 2, 1);      // 1 bit set
-    subframe.set_bit(SubframeData::VALIDITY_SLOT * 2, 1);    // 2 bits set
-    subframe.set_bit(SubframeData::USER_SLOT * 2, 1);        // 3 bits set (odd)
+    // Set specific bits for known parity (using time slot interface)
+    subframe.set_bit(SubframeData::AUDIO_START, 0x01);      // 1 bit set
+    subframe.set_bit(SubframeData::VALIDITY_SLOT, 0x01);    // 2 bits set
+    subframe.set_bit(SubframeData::USER_SLOT, 0x01);        // 3 bits set (odd)
     
     // Act
     uint8_t parity = SubframeBuilder::calculate_parity(subframe);
