@@ -47,7 +47,7 @@ protected:
         
         (void)original_sample;  // Reserved for future validation
         
-        EXPECT_EQ(audio_data & ~expected_mask, 0) 
+        EXPECT_EQ(audio_data & ~expected_mask, 0U) 
             << "LSBs should be zero for " << static_cast<int>(word_length) << "-bit audio";
     }
 };
@@ -118,7 +118,7 @@ TEST_F(PCMEncoderTest, Encode24BitSample_NoJustification_CorrectOutput) {
     
     // Assert
     EXPECT_EQ(result, 0);
-    EXPECT_EQ(encoded_out.audio_data, 0x007FFFFF);  // No shift needed
+    EXPECT_EQ(encoded_out.audio_data, 0x007FFFFFU);  // No shift needed
     EXPECT_EQ(encoded_out.validity, 0);  // Valid sample
     EXPECT_EQ(encoded_out.auxiliary_bits, 0);  // No auxiliary bits for 24-bit
 }
@@ -140,7 +140,7 @@ TEST_F(PCMEncoderTest, Encode20BitSample_MSBJustification_ShiftsLeft4Bits) {
     // Assert
     EXPECT_EQ(result, 0);
     // 20-bit sample shifted left by 4 bits: 0x0007FFFF << 4 = 0x007FFFF0
-    EXPECT_EQ(encoded_out.audio_data, 0x007FFFF0);
+    EXPECT_EQ(encoded_out.audio_data, 0x007FFFF0U);
     EXPECT_EQ(encoded_out.validity, 0);
     // 4 auxiliary bits available (24 - 20 = 4)
 }
@@ -159,7 +159,7 @@ TEST_F(PCMEncoderTest, EncodeNegative24BitSample_TwosComplement_CorrectOutput) {
     
     // Assert
     EXPECT_EQ(result, 0);
-    EXPECT_EQ(encoded_out.audio_data, 0x00800000);  // MSB set for negative value
+    EXPECT_EQ(encoded_out.audio_data, 0x00800000U);  // MSB set for negative value
     EXPECT_EQ(encoded_out.validity, 0);
 }
 
@@ -177,7 +177,7 @@ TEST_F(PCMEncoderTest, EncodeZeroSample_OutputZero) {
     
     // Assert
     EXPECT_EQ(result, 0);
-    EXPECT_EQ(encoded_out.audio_data, 0x00000000);
+    EXPECT_EQ(encoded_out.audio_data, 0x00000000U);
     EXPECT_EQ(encoded_out.validity, 0);
 }
 
@@ -198,7 +198,7 @@ TEST_F(PCMEncoderTest, Encode22BitSample_MSBJustification_ShiftsLeft2Bits) {
     // Assert
     EXPECT_EQ(result, 0);
     // 22-bit sample shifted left by 2 bits: 0x001FFFFF << 2 = 0x007FFFFC
-    EXPECT_EQ(encoded_out.audio_data, 0x007FFFFC);
+    EXPECT_EQ(encoded_out.audio_data, 0x007FFFFCU);
 }
 
 // =============================================================================
@@ -220,7 +220,7 @@ TEST_F(PCMEncoderTest, Encode16BitSample_OptimizedPath_CorrectJustification) {
     // Assert
     EXPECT_EQ(result, 0);
     // 16-bit sample shifted left by 8 bits: 0x7FFF << 8 = 0x007FFF00
-    EXPECT_EQ(encoded_out.audio_data, 0x007FFF00);
+    EXPECT_EQ(encoded_out.audio_data, 0x007FFF00U);
     EXPECT_EQ(encoded_out.validity, 0);
 }
 
@@ -239,7 +239,7 @@ TEST_F(PCMEncoderTest, EncodeNegative16BitSample_TwosComplement_CorrectOutput) {
     // Assert
     EXPECT_EQ(result, 0);
     // 0x8000 << 8 = 0x00800000 (MSB set for negative)
-    EXPECT_EQ(encoded_out.audio_data, 0x00800000);
+    EXPECT_EQ(encoded_out.audio_data, 0x00800000U);
 }
 
 // =============================================================================
@@ -308,7 +308,7 @@ TEST_F(PCMEncoderTest, Encode20BitSample_4AuxiliaryBits) {
     EXPECT_EQ(encoded_out.auxiliary_bits, 0x0F);
     // Audio data should be MSB-justified (shifted left by 4 bits)
     // 0x0007FFFF << 4 = 0x007FFFF0
-    EXPECT_EQ(encoded_out.audio_data, 0x007FFFF0);
+    EXPECT_EQ(encoded_out.audio_data, 0x007FFFF0U);
 }
 
 /**
@@ -345,7 +345,7 @@ TEST_F(PCMEncoderTest, MultipleEncodings_MaintainConsistency) {
     for (int32_t sample : samples) {
         int result = encoder->encode_sample(sample, true, encoded_out);
         EXPECT_EQ(result, 0);
-        EXPECT_LE(encoded_out.audio_data, 0x00FFFFFF) 
+        EXPECT_LE(encoded_out.audio_data, 0x00FFFFFFU) 
             << "Audio data must be 24-bit max";
     }
 }
