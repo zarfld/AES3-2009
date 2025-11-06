@@ -2,7 +2,7 @@
 specType: architecture
 standard: 42010
 phase: 03-architecture
-version: 2.0.0
+version: 2.1.0
 author: Architecture Team
 date: "2025-11-06"
 status: approved
@@ -26,6 +26,10 @@ traceability:
   views:
     - c4-level3-component-view
 changeLog:
+  - version: "2.1"
+    date: 2025-11-06
+    author: Architecture Team
+    changes: "Add Availability and Security scenarios required by CI (QA-SC-AVAIL-001/002/003, QA-SC-SEC-001/002/003)"
   - version: "2.0"
     date: 2025-11-06
     author: Architecture Team
@@ -173,6 +177,148 @@ relatedRequirements:
 relatedADRs:
   - ADR-001
   - ADR-002
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+## Availability Scenarios
+
+### QA-SC-AVAIL-001: Continuous Audio Streaming During Runtime Errors
+
+```yaml
+id: QA-SC-AVAIL-001
+qualityAttribute: Availability
+source: Standards layer encounters invalid channel status data during continuous 48 kHz operation
+stimulus: CRCC validation failure on received channel status block
+stimulusEnvironment: Normal operation with corrupted metadata (electromagnetic interference)
+artifact: Part2/channel_status/crcc_validator.cpp + Part3/frame/frame_assembler.cpp
+response: Continue audio streaming with default channel status, log error, attempt resynchronization
+responseMeasure: Audio dropouts < 1 per hour, MTBF > 10,000 hours, recovery time < 100 ms
+relatedRequirements:
+  - REQ-QUAL-NF-002
+  - REQ-FUNC-F-003
+relatedADRs:
+  - ADR-001
+  - ADR-003
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+### QA-SC-AVAIL-002: Receiver Uptime Under Clock Drift
+
+```yaml
+id: QA-SC-AVAIL-002
+qualityAttribute: Availability
+source: Receiver clock drifts ±50 ppm from transmitter over 24-hour operation
+stimulus: Gradual timing desynchronization between transmitter/receiver
+stimulusEnvironment: Extended operation without external clock synchronization
+artifact: Part3/biphase_mark/biphase_decoder.cpp + Part4/HAL receiver clock recovery
+response: Continuous clock adjustment, maintain lock, no audio interruption
+responseMeasure: Uptime > 99.9% (< 8.6 hours downtime/year), automatic drift compensation
+relatedRequirements:
+  - REQ-PERF-NF-003
+  - REQ-QUAL-NF-001
+relatedADRs:
+  - ADR-001
+  - ADR-002
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+### QA-SC-AVAIL-003: Fault Isolation - Standards Layer Independence
+
+```yaml
+id: QA-SC-AVAIL-003
+qualityAttribute: Availability
+source: Platform HAL failure (driver crash, hardware fault) during active transmission
+stimulus: HAL function returns error code or crashes
+stimulusEnvironment: Failure mode - hardware fault or driver instability
+artifact: Common/interfaces/audio_interface.hpp + Standards layer isolation boundary
+response: Standards layer continues operation, buffers audio, attempts HAL recovery
+responseMeasure: Standards layer crash rate < 0.01% of HAL crashes, recovery attempts > 3
+relatedRequirements:
+  - REQ-FUNC-F-001
+  - REQ-QUAL-NF-003
+relatedADRs:
+  - ADR-001
+  - ADR-003
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+## Security Scenarios
+
+### QA-SC-SEC-001: Buffer Overflow Protection in Biphase Decoder
+
+```yaml
+id: QA-SC-SEC-001
+qualityAttribute: Security
+source: Malformed AES3 stream with invalid preamble sequences (potential attack or hardware fault)
+stimulus: Receiver processes 10,000 consecutive invalid preambles
+stimulusEnvironment: Hostile or faulty transmitter sending malformed data
+artifact: Part3/preambles/preamble_detector.cpp + Part3/biphase_mark/biphase_decoder.cpp
+response: Reject invalid data, maintain buffer integrity, no memory corruption
+responseMeasure: Zero buffer overflows, zero crashes, 100% invalid data rejected
+relatedRequirements:
+  - REQ-QUAL-NF-003
+  - REQ-FUNC-F-001
+relatedADRs:
+  - ADR-001
+  - ADR-003
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+### QA-SC-SEC-002: Denial of Service Resistance - Resource Exhaustion
+
+```yaml
+id: QA-SC-SEC-002
+qualityAttribute: Security
+source: Transmitter sends maximum sample rate (192 kHz) with continuous channel status changes
+stimulus: Worst-case data rate + metadata processing load
+stimulusEnvironment: Stress test simulating resource exhaustion attack
+artifact: All Standards layer components under maximum load
+response: Maintain operation within resource limits, no memory leaks, no starvation
+responseMeasure: CPU < 80%, memory < 16 KB, no resource exhaustion after 72 hours
+relatedRequirements:
+  - REQ-PERF-NF-001
+  - REQ-QUAL-NF-002
+relatedADRs:
+  - ADR-001
+  - ADR-002
+  - ADR-003
+relatedViews:
+  - c4-level3-component-view
+validationMethod: test
+status: draft
+```
+
+### QA-SC-SEC-003: Safe Handling of User Data Channel
+
+```yaml
+id: QA-SC-SEC-003
+qualityAttribute: Security
+source: User data channel contains untrusted binary data (1 bit per subframe)
+stimulus: Receiver processes user data for 192 frames (192-bit user data block)
+stimulusEnvironment: Normal operation with potentially malicious user data
+artifact: Part2/user_data/user_data_channel.cpp
+response: Validate user data length, sanitize before application layer, no code execution
+responseMeasure: Zero code injection vulnerabilities, 100% input validation, safe memory handling
+relatedRequirements:
+  - REQ-QUAL-NF-003
+  - REQ-FUNC-F-002
+relatedADRs:
+  - ADR-001
 relatedViews:
   - c4-level3-component-view
 validationMethod: test
