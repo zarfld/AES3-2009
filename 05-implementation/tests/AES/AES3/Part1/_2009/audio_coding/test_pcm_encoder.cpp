@@ -8,6 +8,13 @@
  * MSB justification for word lengths 20-24 bits, validity bit calculation,
  * and auxiliary bits extraction (AES3-2009 Part 1, Sections 4-6)
  * 
+ * Requirements Coverage:
+ * - REQ-FUNC-AUDIO-001: Linear PCM Encoding (2's complement)
+ * - REQ-FUNC-AUDIO-002: PCM Polarity Convention
+ * - REQ-FUNC-AUDIO-003: Coding Precision Options (16-24 bits)
+ * - REQ-FUNC-AUDIO-004: MSB Justification for Intermediate Precision
+ * - REQ-FUNC-AUDIO-009: Validity Bit Implementation
+ * 
  * @standard AES3-2009 Part 1: Audio Content
  * @copyright Copyright (c) 2025
  */
@@ -59,6 +66,7 @@ protected:
 /**
  * @test TEST-PCM-001: Default construction with 24-bit word length
  * @traceability DES-C-003
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 24-bit default)
  */
 TEST_F(PCMEncoderTest, DefaultConstruction_24BitWordLength) {
     // Assert
@@ -71,6 +79,7 @@ TEST_F(PCMEncoderTest, DefaultConstruction_24BitWordLength) {
 /**
  * @test TEST-PCM-002: Construction with custom configuration
  * @traceability DES-C-003
+ * @verifies REQ-FUNC-AUDIO-003 (Coding Precision Options - 20-bit)
  */
 TEST_F(PCMEncoderTest, CustomConstruction_20BitWordLength) {
     // Arrange
