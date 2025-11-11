@@ -126,6 +126,17 @@ target_include_directories(aes3_part1_audio_coding
 )
 target_compile_features(aes3_part1_audio_coding PUBLIC cxx_std_17)
 
+# Part 2: Metadata (Channel Status)
+add_library(aes3_part2_metadata STATIC
+    ${AES3_SOURCE_DIR}/AES/AES3/Part2/_2009/metadata/channel_status.cpp
+)
+target_include_directories(aes3_part2_metadata
+    PUBLIC
+        ${AES3_INCLUDE_DIR}
+        ${AES3_SOURCE_DIR}
+)
+target_compile_features(aes3_part2_metadata PUBLIC cxx_std_17)
+
 # Part 3: Transport (Subframe Builder)
 add_library(aes3_part3_transport STATIC
     ${AES3_SOURCE_DIR}/AES/AES3/Part3/_2009/subframe/subframe_builder.cpp
@@ -216,8 +227,12 @@ if(ENABLE_TESTING)
     add_executable(test_aes3_part2_conformity
         ${AES3_TEST_DIR}/AES/AES3/Part2/_2009/conformity/test_aes3_part2_conformity.cpp
     )
+    target_include_directories(test_aes3_part2_conformity
+        PRIVATE ${AES3_SOURCE_DIR}
+    )
     target_link_libraries(test_aes3_part2_conformity
         PRIVATE
+            aes3_part2_metadata
             GTest::gtest_main
     )
     gtest_discover_tests(test_aes3_part2_conformity
