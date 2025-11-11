@@ -198,7 +198,16 @@ public:
         event.timestamp_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
             now.time_since_epoch()
         ).count();
-        event.execution_time_ns = metrics_.execution_time_ns;
+        
+        // Calculate current execution time (including active execution)
+        uint64_t current_execution_time_ns = metrics_.execution_time_ns;
+        if (execution_active_) {
+            auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                now - execution_start_time_
+            ).count();
+            current_execution_time_ns += elapsed;
+        }
+        event.execution_time_ns = current_execution_time_ns;
         
         // Update failure counters
         metrics_.failure_count++;
@@ -216,9 +225,9 @@ public:
                                       (1.0 - alpha) * metrics_.current_mttr_ms;
         }
         
-        // Update MTBF estimate
-        if (metrics_.execution_time_ns > 0) {
-            double hours = metrics_.execution_time_ns / 3.6e12; // ns to hours
+        // Update MTBF estimate using current execution time
+        if (current_execution_time_ns > 0) {
+            double hours = current_execution_time_ns / 3.6e12; // ns to hours
             metrics_.current_mtbf_hours = hours / metrics_.failure_count;
         }
         
