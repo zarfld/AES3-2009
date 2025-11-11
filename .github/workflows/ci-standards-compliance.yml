@@ -208,6 +208,166 @@ jobs:
           name: codecov-aes3-cpp
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  # Phase 05.1: TDD - Test-Driven Development
+  unit-tests2:
+    name: C/C++ Unit Tests (C11/C++17 Matrix)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        cxx_standard: [17]
+        c_standard: [11]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "${{ env.PYTHON_VERSION }}"
+
+      - name: Load quality gates (coverage) from quality-gates.yml
+        if: runner.os == 'Linux' || runner.os == 'Windows' || runner.os == 'macOS'
+        shell: bash
+        run: |
+          python - << 'PY'
+          import os, sys
+          try:
+              import yaml  # type: ignore
+          except Exception:
+              import subprocess
+              subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pyyaml'])
+              import yaml  # type: ignore
+
+          gates_path = 'quality-gates.yml'
+          if not os.path.exists(gates_path):
+              print('No quality-gates.yml found; keeping defaults')
+              sys.exit(0)
+
+          with open(gates_path, 'r', encoding='utf-8') as f:
+              data = yaml.safe_load(f) or {}
+
+          cov_min = (data.get('coverage') or {}).get('minimum')
+          if cov_min is not None:
+              with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as envf:
+                  envf.write(f"MIN_TEST_COVERAGE={cov_min}\n")
+          PY
+
+      # Linux setup/build/test with coverage
+      - name: Install toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build gcovr lcov
+      - name: Configure (Linux, Ninja, coverage)
+        if: runner.os == 'Linux'
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_CXX_STANDARD=${{ matrix.cxx_standard }} \
+            -DCMAKE_C_STANDARD=${{ matrix.c_standard }} \
+            -DBUILD_TESTING=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
+            -DCMAKE_C_FLAGS="--coverage -O0 -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
+            -DCMAKE_SHARED_LINKER_FLAGS="--coverage"
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: cmake --build build --config Debug -- -k 0
+      - name: Run tests (Linux)
+        if: runner.os == 'Linux'
+        run: ctest --test-dir build -C Debug --output-on-failure
+      - name: Collect coverage (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          echo "Generating coverage report via gcovr";
+          # Measure ONLY core library code using --filter (whitelist approach)
+          # Include: src/*.cpp, include/**/*.hpp, 05-implementation/src/*.cpp
+          # Exclude: tests, examples, tools, build artifacts
+          gcovr -r . --xml -o build/coverage.xml \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' || true
+          gcovr -r . --branches --txt -o build/coverage.txt \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' || true
+          gcovr -r . --html --html-details -o build/coverage.html \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' || true
+          gcovr -r . --json -o build/coverage.json \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' || true
+
+          echo ""
+          echo "=== CORE LIBRARY COVERAGE REPORT ==="
+          echo ""
+          echo "📊 Core library coverage (src/, include/, 05-implementation/src/ only):"
+          gcovr -r . \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' || true
+
+          echo ""
+          echo "🔍 Showing uncovered lines in src/clocks.cpp:"
+          gcovr -r . --filter 'src/clocks.cpp' --print-summary || true
+
+          echo ""
+          echo "📝 Full detailed report for clocks.cpp:"
+          gcovr -r . --filter 'src/clocks.cpp' || true
+
+          LINE_PCT=$(gcovr -r . \
+            --filter 'src/.*' \
+            --filter 'include/.*' \
+            --filter '05-implementation/src/.*' | grep 'TOTAL' | awk '{print $4}' | sed 's/%//' || echo 0)
+          echo ""
+          echo "Line coverage: ${LINE_PCT}%";
+          python -c "import sys, os; val=float(os.environ.get('LINE_PCT','${LINE_PCT:-0}')); min_cov=float(os.environ.get('MIN_TEST_COVERAGE','80')); print(f'Coverage threshold check: {val:.2f}% vs {min_cov:.2f}%'); sys.exit(0 if val>=min_cov else 1)"
+      - name: Upload coverage artifacts (Linux)
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-linux
+          path: |
+            build/coverage.*
+
+      # macOS setup/build/test
+      - name: Install toolchain (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install ninja || true
+      - name: Configure (macOS, Ninja)
+        if: runner.os == 'macOS'
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_CXX_STANDARD=${{ matrix.cxx_standard }} \
+            -DCMAKE_C_STANDARD=${{ matrix.c_standard }} \
+            -DBUILD_TESTING=ON \
+            -DCMAKE_BUILD_TYPE=Debug
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        run: cmake --build build --config Debug -- -k 0
+      - name: Run tests (macOS)
+        if: runner.os == 'macOS'
+        run: ctest --test-dir build -C Debug --output-on-failure
+
+      # Windows setup/build/test
+      - name: Configure (Windows, MSVC)
+        if: runner.os == 'Windows'
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=${{ matrix.cxx_standard }} -DCMAKE_C_STANDARD=${{ matrix.c_standard }}
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: cmake --build build --config Debug -- /m
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: ctest --test-dir build -C Debug --output-on-failure
+
   traceability-coverage:
     name: Traceability Coverage Enforcement
     needs: [spec-generation]
