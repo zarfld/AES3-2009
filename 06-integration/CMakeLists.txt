@@ -56,11 +56,19 @@ target_link_libraries(test_aes3_end_to_end
         GTest::gtest_main
 )
 
-gtest_discover_tests(test_aes3_end_to_end
-    PROPERTIES
+if(USE_GTEST_DISCOVER_TESTS)
+    gtest_discover_tests(test_aes3_end_to_end
+        PROPERTIES
+            LABELS "integration;e2e;aes3;phase06"
+            TIMEOUT 30
+    )
+else()
+    add_test(NAME test_aes3_end_to_end COMMAND test_aes3_end_to_end)
+    set_tests_properties(test_aes3_end_to_end PROPERTIES 
         LABELS "integration;e2e;aes3;phase06"
         TIMEOUT 30
-)
+    )
+endif()
 
 # Coverage target (optional)
 if(CMAKE_BUILD_TYPE MATCHES Coverage)

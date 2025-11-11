@@ -176,10 +176,15 @@ if(ENABLE_TESTING)
             aes3_part3_transport
             GTest::gtest_main
     )
-    gtest_discover_tests(test_subframe_data
-        PROPERTIES
-            LABELS "unit;part3;transport"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_subframe_data
+            PROPERTIES
+                LABELS "unit;part3;transport"
+        )
+    else()
+        add_test(NAME test_subframe_data COMMAND test_subframe_data)
+        set_tests_properties(test_subframe_data PROPERTIES LABELS "unit;part3;transport")
+    endif()
     
     # Test: PCM Encoder
     add_executable(test_pcm_encoder
@@ -190,10 +195,15 @@ if(ENABLE_TESTING)
             aes3_part1_audio_coding
             GTest::gtest_main
     )
-    gtest_discover_tests(test_pcm_encoder
-        PROPERTIES
-            LABELS "unit;part1;audio"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_pcm_encoder
+            PROPERTIES
+                LABELS "unit;part1;audio"
+        )
+    else()
+        add_test(NAME test_pcm_encoder COMMAND test_pcm_encoder)
+        set_tests_properties(test_pcm_encoder PROPERTIES LABELS "unit;part1;audio")
+    endif()
     
     # Test: Subframe Builder
     add_executable(test_subframe_builder
@@ -204,10 +214,15 @@ if(ENABLE_TESTING)
             aes3_part3_transport
             GTest::gtest_main
     )
-    gtest_discover_tests(test_subframe_builder
-        PROPERTIES
-            LABELS "unit;part3;transport"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_subframe_builder
+            PROPERTIES
+                LABELS "unit;part3;transport"
+        )
+    else()
+        add_test(NAME test_subframe_builder COMMAND test_subframe_builder)
+        set_tests_properties(test_subframe_builder PROPERTIES LABELS "unit;part3;transport")
+    endif()
     
     # Test: Part 1 Conformity (AES3-1-2009 compliance)
     add_executable(test_aes3_part1_conformity
@@ -218,10 +233,15 @@ if(ENABLE_TESTING)
             aes3_part1_audio_coding
             GTest::gtest_main
     )
-    gtest_discover_tests(test_aes3_part1_conformity
-        PROPERTIES
-            LABELS "conformity;part1;audio;standards"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_aes3_part1_conformity
+            PROPERTIES
+                LABELS "conformity;part1;audio;standards"
+        )
+    else()
+        add_test(NAME test_aes3_part1_conformity COMMAND test_aes3_part1_conformity)
+        set_tests_properties(test_aes3_part1_conformity PROPERTIES LABELS "conformity;part1;audio;standards")
+    endif()
     
     # Test: Part 2 Conformity (AES3-2-2009 compliance - metadata and subcode)
     add_executable(test_aes3_part2_conformity
@@ -235,10 +255,15 @@ if(ENABLE_TESTING)
             aes3_part2_metadata
             GTest::gtest_main
     )
-    gtest_discover_tests(test_aes3_part2_conformity
-        PROPERTIES
-            LABELS "conformity;part2;metadata;standards"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_aes3_part2_conformity
+            PROPERTIES
+                LABELS "conformity;part2;metadata;standards"
+        )
+    else()
+        add_test(NAME test_aes3_part2_conformity COMMAND test_aes3_part2_conformity)
+        set_tests_properties(test_aes3_part2_conformity PROPERTIES LABELS "conformity;part2;metadata;standards")
+    endif()
     
     # Test: Part 3 Conformity (AES3-3-2009 compliance - transport)
     add_executable(test_aes3_part3_conformity
@@ -248,10 +273,15 @@ if(ENABLE_TESTING)
         PRIVATE
             GTest::gtest_main
     )
-    gtest_discover_tests(test_aes3_part3_conformity
-        PROPERTIES
-            LABELS "conformity;part3;transport;standards"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_aes3_part3_conformity
+            PROPERTIES
+                LABELS "conformity;part3;transport;standards"
+        )
+    else()
+        add_test(NAME test_aes3_part3_conformity COMMAND test_aes3_part3_conformity)
+        set_tests_properties(test_aes3_part3_conformity PROPERTIES LABELS "conformity;part3;transport;standards")
+    endif()
     
     # Test: Part 4 Conformity (AES3-4-2009 compliance - physical and electrical HAL)
     add_executable(test_aes3_part4_hal_conformity
@@ -261,10 +291,15 @@ if(ENABLE_TESTING)
         PRIVATE
             GTest::gtest_main
     )
-    gtest_discover_tests(test_aes3_part4_hal_conformity
-        PROPERTIES
-            LABELS "conformity;part4;hal;standards"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_aes3_part4_hal_conformity
+            PROPERTIES
+                LABELS "conformity;part4;hal;standards"
+        )
+    else()
+        add_test(NAME test_aes3_part4_hal_conformity COMMAND test_aes3_part4_hal_conformity)
+        set_tests_properties(test_aes3_part4_hal_conformity PROPERTIES LABELS "conformity;part4;hal;standards")
+    endif()
     
     # Test: Mock Audio HAL
     add_executable(test_mock_audio_hal
@@ -275,10 +310,15 @@ if(ENABLE_TESTING)
             aes3_mocks
             GTest::gtest_main
     )
-    gtest_discover_tests(test_mock_audio_hal
-        PROPERTIES
-            LABELS "unit;mocks;infrastructure"
-    )
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_mock_audio_hal
+            PROPERTIES
+                LABELS "unit;mock;hal"
+        )
+    else()
+        add_test(NAME test_mock_audio_hal COMMAND test_mock_audio_hal)
+        set_tests_properties(test_mock_audio_hal PROPERTIES LABELS "unit;mock;hal")
+    endif()
     
     # Integration Test: Transmit Path (Complete end-to-end chain)
     add_executable(test_transmit_integration
@@ -291,11 +331,19 @@ if(ENABLE_TESTING)
             aes3_mocks
             GTest::gtest_main
     )
-    gtest_discover_tests(test_transmit_integration
-        PROPERTIES
+    if(USE_GTEST_DISCOVER_TESTS)
+        gtest_discover_tests(test_transmit_integration
+            PROPERTIES
+                LABELS "integration;transmit;end-to-end"
+                TIMEOUT 60
+        )
+    else()
+        add_test(NAME test_transmit_integration COMMAND test_transmit_integration)
+        set_tests_properties(test_transmit_integration PROPERTIES 
             LABELS "integration;transmit;end-to-end"
             TIMEOUT 60
-    )
+        )
+    endif()
 endif()
 
 # =============================================================================

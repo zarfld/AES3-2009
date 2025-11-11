@@ -31,6 +31,10 @@ option(ENABLE_SANITIZERS "Enable AddressSanitizer and UBSanitizer" OFF)
 option(ENABLE_BENCHMARKS "Enable performance benchmarks" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
+# CI Workaround: Disable gtest_discover_tests() on CI (CMake 3.31 path resolution bug)
+# Use direct add_test() calls instead for reliability
+option(USE_GTEST_DISCOVER_TESTS "Use gtest_discover_tests() for test registration" OFF)
+
 # =============================================================================
 # Compiler Flags (C++17 Standards Layer)
 # =============================================================================
