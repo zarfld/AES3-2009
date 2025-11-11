@@ -129,7 +129,7 @@ struct ChannelStatusBlock {
      * @param emphasis Pre-emphasis value (0-7, see get_pre_emphasis())
      */
     void set_pre_emphasis(uint8_t emphasis) noexcept {
-        bytes[0] = (bytes[0] & 0xE3) | ((emphasis & 0x07) << 2);
+        bytes[0] = static_cast<uint8_t>((bytes[0] & 0xE3) | ((emphasis & 0x07) << 2));
     }
     
     /**
@@ -170,7 +170,7 @@ struct ChannelStatusBlock {
      * @param fs Sampling frequency value (0-3, see get_sampling_frequency())
      */
     void set_sampling_frequency(uint8_t fs) noexcept {
-        bytes[0] = (bytes[0] & 0x3F) | ((fs & 0x03) << 6);
+        bytes[0] = static_cast<uint8_t>((bytes[0] & 0x3F) | ((fs & 0x03) << 6));
     }
     
     // =========================================================================
@@ -230,7 +230,7 @@ struct ChannelStatusBlock {
      * @param wl Word length value (0-7, see get_word_length())
      */
     void set_word_length(uint8_t wl) noexcept {
-        bytes[2] = (bytes[2] & 0xC7) | ((wl & 0x07) << 3);
+        bytes[2] = static_cast<uint8_t>((bytes[2] & 0xC7) | ((wl & 0x07) << 3));
     }
     
     /**
@@ -251,7 +251,7 @@ struct ChannelStatusBlock {
      * @param align Alignment level value (0-3, see get_alignment_level())
      */
     void set_alignment_level(uint8_t align) noexcept {
-        bytes[2] = (bytes[2] & 0x3F) | ((align & 0x03) << 6);
+        bytes[2] = static_cast<uint8_t>((bytes[2] & 0x3F) | ((align & 0x03) << 6));
     }
 };
 

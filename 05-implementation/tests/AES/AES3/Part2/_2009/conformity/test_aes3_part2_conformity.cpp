@@ -423,7 +423,7 @@ TEST_F(AES3_Part2_Conformity, TEST_CONF_META_040_AuxBitsCoordinationSignal) {
     AuxiliaryBits nibble3(0x0F);
     
     // 12-bit sample = nibble1 (LSB) + nibble2 + nibble3 (MSB)
-    uint16_t sample_12bit = (nibble3.bits << 8) | (nibble2.bits << 4) | nibble1.bits;
+    uint16_t sample_12bit = static_cast<uint16_t>((nibble3.bits << 8) | (nibble2.bits << 4) | nibble1.bits);
     EXPECT_EQ(0xFA5, sample_12bit);
 }
 
