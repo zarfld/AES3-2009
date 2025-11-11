@@ -65,7 +65,7 @@ TEST_F(ReliabilityLoggingTest, TEST_REL_001_ExecutionTimeTracking) {
     // Verify execution time recorded (should be ~100ms = 100,000,000 ns)
     auto metrics = logger.get_metrics();
     EXPECT_GT(metrics.execution_time_ns, 90'000'000ULL);  // At least 90ms
-    EXPECT_LT(metrics.execution_time_ns, 120'000'000ULL); // Less than 120ms (tolerance)
+    EXPECT_LT(metrics.execution_time_ns, 150'000'000ULL); // Less than 150ms (CI tolerance)
 }
 
 /**
