@@ -92,7 +92,7 @@ public:
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
             now - last_transmit_time
         );
-        return duration.count() / 1000.0; // Convert to milliseconds
+        return static_cast<double>(duration.count()) / 1000.0; // Convert to milliseconds
     }
     
     void clear() {
@@ -160,7 +160,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_001_CompleteFrameAssembly) {
         
         // Subframe A (Channel 1)
         int result_a = subframe_builder.build_subframe(
-            audio_samples[frame],
+            static_cast<uint32_t>(audio_samples[frame]),
             1, // validity bit (1=valid)
             0, // user data bit
             (channel_status.bytes[frame / 8] >> (frame % 8)) & 0x01, // channel status bit
@@ -175,7 +175,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_001_CompleteFrameAssembly) {
         
         // Subframe B (Channel 2) - mirror of A for stereo
         int result_b = subframe_builder.build_subframe(
-            audio_samples[frame],
+            static_cast<uint32_t>(audio_samples[frame]),
             1, // validity bit
             0, // user data bit
             (channel_status.bytes[frame / 8] >> (frame % 8)) & 0x01, // channel status bit
