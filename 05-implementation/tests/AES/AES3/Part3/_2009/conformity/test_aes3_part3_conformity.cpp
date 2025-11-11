@@ -661,13 +661,13 @@ TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_044_BiphasePolarity_Insensitive) {
 }
 
 TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_045_BiphaseLSBFirst) {
-    // REQ-FUNC-TRANS-004: Audio sample LSB transmitted first
+    // REQ-FUNC-TRANS-004: Audio sample LSB transmitted first (slot 4)
     uint32_t sample = 0x01;  // LSB set
     uint64_t encoded = BiphaseMarkCoder::encode(sample, 8);
     
     // Verify LSB is in first bit position after encoding
     uint32_t decoded = BiphaseMarkCoder::decode(encoded, 8);
-    EXPECT_EQ(decoded & 0x01, 0x01);
+    EXPECT_EQ(decoded & 0x01U, 0x01U);
 }
 
 TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_046_BiphaseMSBLast) {
