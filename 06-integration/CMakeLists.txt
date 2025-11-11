@@ -46,6 +46,7 @@ target_include_directories(test_aes3_end_to_end
     PRIVATE 
         ${AES3_SOURCE_DIR}
         ${AES3_INCLUDE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(test_aes3_end_to_end
@@ -70,6 +71,35 @@ else()
     )
 endif()
 
+# IEEE 1633 Reliability Logging Tests
+add_executable(test_reliability_logging
+    tests/reliability/test_reliability_logging.cpp
+)
+
+target_include_directories(test_reliability_logging
+    PRIVATE 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(test_reliability_logging
+    PRIVATE
+        GTest::gtest_main
+)
+
+if(USE_GTEST_DISCOVER_TESTS)
+    gtest_discover_tests(test_reliability_logging
+        PROPERTIES
+            LABELS "reliability;ieee1633;phase06"
+            TIMEOUT 60
+    )
+else()
+    add_test(NAME test_reliability_logging COMMAND test_reliability_logging)
+    set_tests_properties(test_reliability_logging PROPERTIES 
+        LABELS "reliability;ieee1633;phase06"
+        TIMEOUT 60
+    )
+endif()
+
 # Coverage target (optional)
 if(CMAKE_BUILD_TYPE MATCHES Coverage)
     include(CodeCoverage)
@@ -86,7 +116,9 @@ message(STATUS "========================================")
 message(STATUS "AES3-2009 Integration Tests (Phase 06)")
 message(STATUS "========================================")
 message(STATUS "Integration test target: test_aes3_end_to_end")
+message(STATUS "Reliability test target: test_reliability_logging")
 message(STATUS "Implementation path: ${IMPLEMENTATION_DIR}")
-message(STATUS "Test count: 6 end-to-end scenarios")
+message(STATUS "Integration tests: 6 end-to-end scenarios")
+message(STATUS "Reliability tests: 10 IEEE 1633 validation tests")
 message(STATUS "========================================")
 message(STATUS "")
