@@ -16,8 +16,13 @@ set(IMPLEMENTATION_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../05-implementation")
 set(AES3_INCLUDE_DIR "${IMPLEMENTATION_DIR}/include")
 set(AES3_SOURCE_DIR "${IMPLEMENTATION_DIR}/src")
 
-# Add Phase 05 implementation libraries
-add_subdirectory(${IMPLEMENTATION_DIR} ${CMAKE_CURRENT_BINARY_DIR}/implementation)
+# Add Phase 05 implementation libraries (only if not already added by root CMakeLists.txt)
+if(NOT TARGET aes3_part1_audio_coding)
+    message(STATUS "Adding Phase 05 implementation from Phase 06")
+    add_subdirectory(${IMPLEMENTATION_DIR} ${CMAKE_CURRENT_BINARY_DIR}/implementation)
+else()
+    message(STATUS "Phase 05 implementation already available (added by root)")
+endif()
 
 # Google Test
 include(FetchContent)
