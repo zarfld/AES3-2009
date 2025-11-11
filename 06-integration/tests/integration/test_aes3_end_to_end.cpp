@@ -215,7 +215,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_002_LatencyRequirement) {
     for (size_t frame = 0; frame < 192; frame++) {
         SubframeData subframe;
         int result = subframe_builder.build_subframe(
-            audio_samples[frame],
+            static_cast<uint32_t>(audio_samples[frame]),
             1, // validity bit (1=valid)
             0, // user data bit
             0, // channel status bit
@@ -230,7 +230,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_002_LatencyRequirement) {
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(
         end_time - start_time
     ).count();
-    double duration_ms = duration_us / 1000.0;
+    double duration_ms = static_cast<double>(duration_us) / 1000.0;
     
     EXPECT_LT(duration_ms, 10.0) 
         << "Frame assembly took " << duration_ms << "ms, exceeds 10ms requirement";
@@ -264,7 +264,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_003_ChannelStatusPropagation) {
         
         SubframeData subframe;
         int result = subframe_builder.build_subframe(
-            audio_samples[frame],
+            static_cast<uint32_t>(audio_samples[frame]),
             1, // validity bit
             0, // user data bit
             channel_bit,
@@ -369,7 +369,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_006_StereoPairSynchronization) {
     // Build subframe A (left channel)
     SubframeData subframe_a;
     int result_a = subframe_builder.build_subframe(
-        left_sample,
+        static_cast<uint32_t>(left_sample),
         1, // validity bit
         0, // user data bit
         0, // channel status bit
@@ -381,7 +381,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_006_StereoPairSynchronization) {
     // Build subframe B (right channel)
     SubframeData subframe_b;
     int result_b = subframe_builder.build_subframe(
-        right_sample,
+        static_cast<uint32_t>(right_sample),
         1, // validity bit
         0, // user data bit
         0, // channel status bit

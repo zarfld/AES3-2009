@@ -24,6 +24,7 @@
 #define AES_AES3_PART2_2009_METADATA_CHANNEL_STATUS_HPP
 
 #include <array>
+#include <cstddef>  // For size_t
 #include <cstdint>
 
 namespace AES {
