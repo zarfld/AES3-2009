@@ -577,7 +577,7 @@ TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_036_BiphaseEncode_AllZeros) {
     uint64_t encoded = BiphaseMarkCoder::encode(data, 8);
     uint32_t decoded = BiphaseMarkCoder::decode(encoded, 8);
     
-    EXPECT_EQ(decoded, 0x00);
+    EXPECT_EQ(decoded, 0x00U);
 }
 
 TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_037_BiphaseEncode_AllOnes) {
@@ -595,7 +595,7 @@ TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_038_BiphaseEncode_Alternating) {
     uint64_t encoded = BiphaseMarkCoder::encode(data, 16);
     uint32_t decoded = BiphaseMarkCoder::decode(encoded, 16);
     
-    EXPECT_EQ(decoded, 0x5555);
+    EXPECT_EQ(decoded, 0x5555U);
 }
 
 TEST_F(AES3_Part3_Conformity, TEST_CONF_TRANS_039_BiphaseDCBalance_EvenBits) {
