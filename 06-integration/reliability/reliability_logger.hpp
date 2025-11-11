@@ -29,6 +29,7 @@
 #define AES3_2009_RELIABILITY_LOGGER_HPP
 
 #include <cstdint>
+#include <cmath>
 #include <chrono>
 #include <string>
 #include <vector>
@@ -102,8 +103,8 @@ struct ExecutionMetrics {
      */
     double failure_intensity() const {
         if (execution_time_ns == 0) return 0.0;
-        double hours = execution_time_ns / 3.6e12; // ns to hours
-        return failure_count / hours;
+        double hours = static_cast<double>(execution_time_ns) / 3.6e12; // ns to hours
+        return static_cast<double>(failure_count) / hours;
     }
     
     /**
@@ -180,7 +181,7 @@ public:
             auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 now - execution_start_time_
             ).count();
-            metrics_.execution_time_ns += elapsed;
+            metrics_.execution_time_ns += static_cast<uint64_t>(elapsed);
             execution_active_ = false;
         }
     }
@@ -195,9 +196,9 @@ public:
         
         // Auto-populate timestamp and execution time
         auto now = std::chrono::high_resolution_clock::now();
-        event.timestamp_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        event.timestamp_ns = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(
             now.time_since_epoch()
-        ).count();
+        ).count());
         
         // Calculate current execution time (including active execution)
         uint64_t current_execution_time_ns = metrics_.execution_time_ns;
@@ -205,7 +206,7 @@ public:
             auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 now - execution_start_time_
             ).count();
-            current_execution_time_ns += elapsed;
+            current_execution_time_ns += static_cast<uint64_t>(elapsed);
         }
         event.execution_time_ns = current_execution_time_ns;
         
@@ -227,7 +228,7 @@ public:
         
         // Update MTBF estimate using current execution time
         if (current_execution_time_ns > 0) {
-            double hours = current_execution_time_ns / 3.6e12; // ns to hours
+            double hours = static_cast<double>(current_execution_time_ns) / 3.6e12; // ns to hours
             metrics_.current_mtbf_hours = hours / metrics_.failure_count;
         }
         
@@ -341,9 +342,9 @@ public:
         }
         
         // Laplace statistic: u(t) = (sum(ti)/n - T/2) / (T * sqrt(1/(12n)))
-        double mean_failure_time = static_cast<double>(sum_ti) / n;
+        double mean_failure_time = static_cast<double>(sum_ti) / static_cast<double>(n);
         double half_T = static_cast<double>(T) / 2.0;
-        double denominator = static_cast<double>(T) * std::sqrt(1.0 / (12.0 * n));
+        double denominator = static_cast<double>(T) * std::sqrt(1.0 / (12.0 * static_cast<double>(n)));
         
         if (denominator == 0.0) return 0.0;
         

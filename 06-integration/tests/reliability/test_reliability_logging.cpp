@@ -377,7 +377,7 @@ TEST_F(ReliabilityLoggingTest, TEST_REL_009_ThreadSafety) {
     
     std::vector<std::thread> threads;
     for (int t = 0; t < num_threads; t++) {
-        threads.emplace_back([&logger, t]() {
+        threads.emplace_back([&logger, t, failures_per_thread]() {
             for (int i = 0; i < failures_per_thread; i++) {
                 FailureEvent event{};
                 event.component = Component::Integration;
