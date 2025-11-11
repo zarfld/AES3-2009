@@ -170,7 +170,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_001_CompleteFrameAssembly) {
         
         ASSERT_EQ(result_a, 0) 
             << "Subframe build failed for frame " << frame << " subframe A";
-        ASSERT_EQ(mock_hal.transmit_subframe(subframe_a.data), 0) 
+        ASSERT_EQ(mock_hal.transmit_subframe(static_cast<uint32_t>(subframe_a.data)), 0) 
             << "HAL transmission failed for frame " << frame << " subframe A";
         
         // Subframe B (Channel 2) - mirror of A for stereo
@@ -185,7 +185,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_001_CompleteFrameAssembly) {
         
         ASSERT_EQ(result_b, 0)
             << "Subframe build failed for frame " << frame << " subframe B";
-        ASSERT_EQ(mock_hal.transmit_subframe(subframe_b.data), 0)
+        ASSERT_EQ(mock_hal.transmit_subframe(static_cast<uint32_t>(subframe_b.data)), 0)
             << "HAL transmission failed for frame " << frame << " subframe B";
     }
     
@@ -223,7 +223,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_002_LatencyRequirement) {
             subframe
         );
         ASSERT_EQ(result, 0);
-        mock_hal.transmit_subframe(subframe.data);
+        mock_hal.transmit_subframe(static_cast<uint32_t>(subframe.data));
     }
     
     auto end_time = std::chrono::high_resolution_clock::now();
@@ -258,8 +258,8 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_003_ChannelStatusPropagation) {
     
     // Build frames with channel status bits
     for (size_t frame = 0; frame < 192; frame++) {
-        uint8_t byte_index = frame / 8;
-        uint8_t bit_index = frame % 8;
+        uint8_t byte_index = static_cast<uint8_t>(frame / 8);
+        uint8_t bit_index = static_cast<uint8_t>(frame % 8);
         uint8_t channel_bit = (channel_status.bytes[byte_index] >> bit_index) & 0x01;
         
         SubframeData subframe;
@@ -273,7 +273,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_003_ChannelStatusPropagation) {
         );
         
         ASSERT_EQ(result, 0);
-        mock_hal.transmit_subframe(subframe.data);
+        mock_hal.transmit_subframe(static_cast<uint32_t>(subframe.data));
     }
     
     // Verify transmission completed
@@ -343,7 +343,7 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_005_AudioSampleIntegrity) {
         ASSERT_EQ(result, 0) << "Subframe build failed for sample " << sample;
         
         // Transmit
-        ASSERT_EQ(mock_hal.transmit_subframe(subframe.data), 0)
+        ASSERT_EQ(mock_hal.transmit_subframe(static_cast<uint32_t>(subframe.data)), 0)
             << "Transmission failed for sample " << sample;
         
         // In real implementation, would decode and verify sample matches
@@ -391,8 +391,8 @@ TEST_F(AES3_EndToEnd_Integration, TEST_INT_E2E_006_StereoPairSynchronization) {
     ASSERT_EQ(result_b, 0);
     
     // Transmit stereo pair
-    ASSERT_EQ(mock_hal.transmit_subframe(subframe_a.data), 0);
-    ASSERT_EQ(mock_hal.transmit_subframe(subframe_b.data), 0);
+    ASSERT_EQ(mock_hal.transmit_subframe(static_cast<uint32_t>(subframe_a.data)), 0);
+    ASSERT_EQ(mock_hal.transmit_subframe(static_cast<uint32_t>(subframe_b.data)), 0);
     
     // Verify both subframes transmitted
     EXPECT_EQ(mock_hal.transmitted_data.size(), 8) // 2 subframes * 4 bytes
