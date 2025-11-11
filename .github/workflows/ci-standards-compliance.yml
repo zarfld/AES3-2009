@@ -488,7 +488,7 @@ jobs:
   integration-tests:
     name: Integration Tests (XP - Continuous Integration)
     runs-on: ubuntu-latest
-    needs: [unit-tests]
+    needs: [unit-tests,unit-tests2]
 
     steps:
       - name: Checkout code
@@ -737,6 +737,7 @@ jobs:
         spec-validation,
         code-quality,
         unit-tests,
+        unit-tests2,
         integration-tests,
         requirements-traceability,
         acceptance-tests,
@@ -868,6 +869,7 @@ jobs:
       [
         code-quality,
         unit-tests,
+        unit-tests2,
         integration-tests,
         acceptance-tests,
         security-scan,
