@@ -6,8 +6,65 @@
 ![Standard](https://img.shields.io/badge/standard-AES3--2009-blue)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+![Release](https://img.shields.io/badge/release-v0.1.0--alpha.1-orange)
 
 A **hardware-agnostic, standards-compliant reference implementation** of the AES3-2009 digital audio interface specification for professional audio applications.
+
+---
+
+## ⚠️ ALPHA SOFTWARE NOTICE
+
+**Version**: v0.1.0-alpha.1  
+**Status**: Alpha Release (NOT PRODUCTION READY)  
+**Release Date**: November 20, 2025
+
+This is an **Alpha release** for technical evaluation and early adopter testing only.
+
+### 🚫 DO NOT USE FOR:
+- ❌ Production broadcast transmission
+- ❌ Professional recording environments  
+- ❌ Safety-critical applications
+- ❌ 24/7 continuous operation
+- ❌ Any scenario requiring high reliability
+
+### ✅ SUITABLE FOR:
+- ✅ Technical evaluation in test labs
+- ✅ Educational/research purposes
+- ✅ Early adopter testing with monitoring
+- ✅ Standards compliance demonstration
+- ✅ Protocol analysis and learning
+
+### ⚠️ Known Limitations
+
+This Alpha release has **8 critical validation gaps** (see [V&V Summary Report](07-verification-validation/vv-summary-report.md) Section 1):
+
+1. **No customer validation** - No real users have tested this yet
+2. **No field reliability data** - No long-term operational data collected
+3. **No equipment compatibility testing** - Not tested with professional AES3 equipment
+4. **16.36% uncovered code paths** - Some edge cases not yet tested
+5. **No security assessment** - Security vulnerabilities not yet evaluated
+6. **No long-term stability data** - Longest test run is implementation tests only
+7. **No independent code review** - Only developer review completed
+8. **No real-world edge cases** - Only specification-based test cases
+
+### 🧪 Help Us Validate!
+
+**We need YOUR help to validate this implementation!**
+
+- 📖 Read the **[Alpha Testing Guide](ALPHA_TESTING_GUIDE.md)** to participate
+- 🐛 Report bugs using our **[Issue Templates](.github/ISSUE_TEMPLATE/)**
+- 📊 Submit results using the **[Field Reliability Report Template](field-reliability-report-template.md)**
+- 🔧 Test with your professional AES3 equipment
+
+**Alpha Success Criteria** (before Beta release):
+- ✅ 10+ adopters testing in lab environments
+- ✅ 100+ hours of cumulative operation time
+- ✅ 5+ different equipment types tested
+- ✅ 20+ issues reported and triaged
+
+**Questions?** Join the discussion on [GitHub Discussions](https://github.com/zarfld/AES3-2009/discussions)
+
+---
 
 ## ✅ Phase 05 Implementation: COMPLETE
 
@@ -174,6 +231,15 @@ AES3-2009/
 
 ## 🎓 Getting Started
 
+### ⚠️ Alpha Tester Prerequisites
+
+**Before you begin**, please understand:
+
+1. ✅ **Read the [Alpha Testing Guide](ALPHA_TESTING_GUIDE.md)** - Complete testing instructions
+2. ⚠️ **This is NOT production software** - For testing and evaluation only
+3. 🧪 **Test environment required** - Do not use in live production
+4. 📊 **Report your findings** - Help validate the implementation
+
 ### Prerequisites
 
 **Compilers:**
@@ -193,6 +259,12 @@ AES3-2009/
 - **Unity Test Framework** for embedded testing
 - **SEGGER SystemView** for real-time profiling
 
+**For Alpha Testing:**
+
+- **AES3 audio interface** (professional or prosumer)
+- **Professional AES3 equipment** (optional, for interoperability testing)
+- **Test environment** (not production!)
+
 ### Installation
 
 ```bash
@@ -209,8 +281,23 @@ cmake ..
 # Build the library
 cmake --build .
 
-# Run tests
+# Run tests to verify build
 ctest --output-on-failure
+```
+
+### Alpha Testing Quick Start
+
+```bash
+# 1. Build the implementation (see Installation above)
+
+# 2. Read the Alpha Testing Guide
+cat ALPHA_TESTING_GUIDE.md
+
+# 3. Run Basic Functionality Test (Test Scenario 1)
+# Follow instructions in Alpha Testing Guide Section 6
+
+# 4. Report your results
+# Use GitHub Issue Templates or Field Reliability Report Template
 ```
 
 ### Quick Start Example
@@ -307,12 +394,29 @@ This project follows the **9-phase IEEE 12207 software lifecycle**:
 | **03** Architecture | ✅ Complete | C4 views (Level 1-3), ADRs, layered architecture design | - |
 | **04** Design | ✅ Complete | Detailed component designs, interfaces, data models | - |
 | **05** Implementation | ✅ **COMPLETE** | TDD implementation with C++17/C | **84/84 tests (100%)** |
-| **06** Integration | 📋 Planned | Continuous integration, automated testing | CI/CD workflow ready |
-| **07** Verification & Validation | 📋 Planned | Conformance testing, AES3-2009 compliance validation | - |
-| **08** Transition | 📋 Planned | Deployment, integration guides, platform-specific examples | - |
-| **09** Operation & Maintenance | 📋 Planned | Monitoring, continuous improvement | - |
+| **06** Integration | ✅ Complete | Continuous integration, automated testing | CI/CD workflow configured |
+| **07** Verification & Validation | ✅ Complete | Conformance testing, AES3-2009 compliance validation | [V&V Summary Report](07-verification-validation/vv-summary-report.md) |
+| **08** Transition | � **IN PROGRESS** | Alpha deployment, testing framework, community enablement | [Alpha Release Plan](08-transition/deployment-plans/alpha-release-plan.md) |
+| **09** Operation & Maintenance | ⏳ Post-Alpha | Monitoring, continuous improvement | Begins after Alpha deployment |
 
-### Current Phase: Phase 05 → Phase 06 Transition
+### Current Phase: Phase 08 Transition (Alpha Release)
+
+**Phase 08 Objectives** (IN PROGRESS) 🔄:
+
+- ✅ **Alpha Release Plan**: Comprehensive 8-day deployment plan (DPL-ALPHA-001)
+- ✅ **Testing Framework**: Alpha Testing Guide + Field Reliability Report Template
+- ✅ **Community Enablement**: Issue templates, contribution guidelines, MIT License
+- 🔄 **Pre-Release Documentation**: README updates, CODE_OF_CONDUCT.md
+- ⏳ **GitHub Setup**: Discussions, labels, project board (Days 3-4)
+- ⏳ **Release Execution**: v0.1.0-alpha.1 release on November 20, 2025
+
+**Phase 07 Deliverables (COMPLETE)** ✅:
+
+- ✅ **V&V Summary Report**: Honest validation assessment (VV-SUMMARY-001)
+- ✅ **Code Coverage Analysis**: 83.64% coverage, 16.36% gaps identified (CCGA-001)
+- ✅ **249 Tests**: 100% pass rate across all components
+- ✅ **Validation Gaps Identified**: 8 critical gaps requiring field data
+- ✅ **Transition Readiness**: Alpha release as validation enabler
 
 **Phase 05 Deliverables (COMPLETE)** ✅:
 
@@ -374,16 +478,47 @@ namespace AES3::Part3::_2009 {
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these guidelines:
+We welcome contributions! **During Alpha phase, we especially need:**
 
-### Contribution Workflow
+- 🧪 **Testing**: Test with your equipment and report results
+- 🐛 **Bug Reports**: Help us find and fix issues
+- 📄 **Documentation**: Improve clarity and examples
+- 🔧 **Bug Fixes**: Fix issues you discover (with tests!)
+
+**Full contribution guidelines**: See **[CONTRIBUTING.md](CONTRIBUTING.md)**
+
+### Alpha Phase Contribution Focus
+
+During Alpha, we prioritize:
+
+1. **Testing** (PRIMARY FOCUS)
+   - Run test scenarios from [Alpha Testing Guide](ALPHA_TESTING_GUIDE.md)
+   - Test with professional AES3 equipment
+   - Submit [Field Reliability Reports](field-reliability-report-template.md)
+
+2. **Bug Reports** (HIGH PRIORITY)
+   - Use [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md)
+   - Provide complete environment details
+   - Include reproduction steps and logs
+
+3. **Documentation Improvements** (ALWAYS WELCOME)
+   - Fix typos and clarity issues
+   - Add examples and explanations
+   - Improve testing instructions
+
+4. **Code Contributions** (BUG FIXES ONLY)
+   - Bug fixes with tests welcome
+   - New features wait for Beta phase
+   - Follow TDD approach (tests first)
+
+### Quick Contribution Workflow
 
 1. **Fork** the repository
-2. **Create feature branch**: `git checkout -b feature/aes3-part1-pcm-encoder`
-3. **Follow phase instructions**: Work in appropriate phase folder
-4. **Write tests first**: TDD approach (red-green-refactor)
-5. **Ensure compliance**: Run validation scripts before commit
-6. **Submit pull request**: With clear description and traceability
+2. **Create feature branch**: `git checkout -b fix/issue-123-buffer-overflow`
+3. **Write tests first**: TDD approach (red-green-refactor)
+4. **Ensure all tests pass**: `ctest --output-on-failure`
+5. **Commit with conventional format**: `fix(part3): resolve buffer overflow in preamble detection`
+6. **Submit pull request**: With clear description and issue reference
 
 ### Code Quality Standards
 
@@ -396,16 +531,26 @@ We welcome contributions! Please follow these guidelines:
 ### Development Environment Setup
 
 ```bash
-# Install development dependencies
+# Install development dependencies (Linux)
 sudo apt-get install cmake g++ clang-tidy cppcheck
 
-# Configure pre-commit hooks
-python scripts/pre-commit-hook.py --install
+# Windows (using vcpkg or manual installation)
+# Install Visual Studio 2019+ with C++ workload
+# Install CMake 3.20+
 
-# Run validation before commit
-python scripts/validate-spec-structure.py
-python scripts/validate-traceability.py
+# Clone and build
+git clone https://github.com/zarfld/AES3-2009.git
+cd AES3-2009
+mkdir build && cd build
+cmake ..
+cmake --build .
+ctest --output-on-failure
+
+# Configure pre-commit hooks (optional)
+python scripts/pre-commit-hook.py --install
 ```
+
+For detailed instructions, see **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ## 🧪 Testing Strategy
 
@@ -472,9 +617,23 @@ ctest -R benchmark
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE.md).
+This project is licensed under the [MIT License](LICENSE).
 
-**Note**: This implementation is based on understanding of the AES3-2009 specification. The AES3-2009 standard itself is copyrighted by the Audio Engineering Society (AES). Users must obtain the official specification from AES for authoritative requirements.
+**Copyright (c) 2025 AES3-2009 Project Contributors**
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to including the license and copyright notice.
+
+**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.** See [LICENSE](LICENSE) for full terms.
+
+### Important Legal Notices
+
+1. **AES3-2009 Specification**: This implementation is based on understanding of the AES3-2009 specification. The AES3-2009 standard itself is copyrighted by the Audio Engineering Society (AES). Users must obtain the official specification from AES for authoritative requirements.
+
+2. **No Warranty**: This is Alpha software with known limitations. See the [Alpha Software Notice](#-alpha-software-notice) above for details.
+
+3. **Liability**: Contributors and maintainers accept NO LIABILITY for any damages arising from use of this software. Use at your own risk, especially during Alpha phase.
+
+4. **Fitness for Purpose**: This Alpha release is NOT warranted for production use. See [Known Limitations](#-known-limitations) for validation gaps.
 
 ## � Documentation
 
