@@ -17,7 +17,7 @@ param(
     [switch]$SkipTests,
     
     [Parameter(Mandatory=$false)]
-    [switch]$Verbose
+    [switch]$VerboseOutput
 )
 
 # Script configuration
