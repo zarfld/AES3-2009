@@ -65,7 +65,13 @@ TEST_F(ReliabilityLoggingTest, TEST_REL_001_ExecutionTimeTracking) {
     // Verify execution time recorded (should be ~100ms = 100,000,000 ns)
     auto metrics = logger.get_metrics();
     EXPECT_GT(metrics.execution_time_ns, 90'000'000ULL);  // At least 90ms
-    EXPECT_LT(metrics.execution_time_ns, 150'000'000ULL); // Less than 150ms (CI tolerance)
+    
+    // Platform-specific upper bounds due to CI runner variability
+    #ifdef __APPLE__
+        EXPECT_LT(metrics.execution_time_ns, 300'000'000ULL); // macOS CI can be slower (300ms tolerance)
+    #else
+        EXPECT_LT(metrics.execution_time_ns, 150'000'000ULL); // Windows/Linux: 150ms tolerance
+    #endif
 }
 
 /**
