@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/zarfld/AES3-2009/discussions
+    about: Ask questions and discuss with the community
+  - name: 📖 Alpha Testing Guide
+    url: https://github.com/zarfld/AES3-2009/blob/master/ALPHA_TESTING_GUIDE.md
+    about: Complete guide for Alpha testing with 9 detailed scenarios
+  - name: 📋 Field Reliability Report
+    url: https://github.com/zarfld/AES3-2009/blob/master/field-reliability-report-template.md
+    about: Detailed reliability data submission template for long-term testing
