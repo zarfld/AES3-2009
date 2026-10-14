@@ -382,7 +382,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Download traceability artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: spec-generated-artifacts
           path: .
@@ -753,7 +753,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
 
       - name: Generate compliance report
         run: |
