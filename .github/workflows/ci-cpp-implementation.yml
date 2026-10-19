@@ -101,7 +101,7 @@ jobs:
             - name: Upload Coverage to Codecov
               if: matrix.os == 'ubuntu-latest' && matrix.build_type == 'Debug'
               continue-on-error: true
-              uses: codecov/codecov-action@v4
+              uses: codecov/codecov-action@v7
               with:
                   files: ./05-implementation/coverage.info
                   flags: unittests
