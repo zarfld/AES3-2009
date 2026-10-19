@@ -120,7 +120,7 @@ jobs:
 
             - name: Upload Test Results
               if: always()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: test-results-${{ matrix.os }}-${{ matrix.build_type }}
                   path: |
@@ -188,7 +188,7 @@ jobs:
                   }
 
             - name: Upload traceability report
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: traceability-matrix
                   path: reports/traceability-matrix.md
@@ -418,7 +418,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
 
             - name: Upload reports
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               if: always()
               with:
                   name: security-scan-reports
@@ -522,7 +522,7 @@ jobs:
                   echo "" >> $GITHUB_STEP_SUMMARY
 
             - name: Upload complexity reports
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: complexity-reports
                   path: 05-implementation/complexity-*.txt
@@ -692,7 +692,7 @@ jobs:
                   cat compliance-report.md
 
             - name: Upload compliance report
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: compliance-report
                   path: compliance-report.md
@@ -723,7 +723,7 @@ jobs:
                   echo "![CMake](https://img.shields.io/badge/CMake-3.20%2B-blue)" >> badge.md
 
             - name: Upload badge
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: build-badge
                   path: badge.md
